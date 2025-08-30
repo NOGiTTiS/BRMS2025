@@ -1,7 +1,7 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 
 <div class="bg-pink-50">
-    <div x-data="{ sidebarOpen: false }" class="relative md:flex h-screen">
+    <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
         <!-- Overlay & Sidebar (คัดลอกจากหน้าปฏิทินมาได้เลย) -->
         <?php include APPROOT . '/views/inc/sidebar.php'; ?>
@@ -13,7 +13,7 @@
             <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
             <!-- START: Page Content -->
-            <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <main class="flex-1 p-4 md:p-8">
                 <!-- Stat Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-lg shadow-md">

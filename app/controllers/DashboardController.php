@@ -23,6 +23,7 @@ class DashboardController extends Controller {
         // เตรียมข้อมูลสำหรับส่งไปให้ View
         $data = [
             'title' => 'ภาพรวมระบบ',
+            'active_menu' => 'dashboard',
             'totalBookings' => $totalBookings,
             'pendingBookings' => $pendingBookings,
             'totalRooms' => $totalRooms,

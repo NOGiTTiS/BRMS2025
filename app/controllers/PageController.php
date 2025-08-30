@@ -15,6 +15,7 @@
       // เตรียมข้อมูลที่จะส่งไปให้ View
       $data = [
         'title' => 'ปฏิทินการจองห้องประชุม',
+        'active_menu' => 'calendar', 
         // 'bookings' => $bookings
       ];
 

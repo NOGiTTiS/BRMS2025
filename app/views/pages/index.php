@@ -1,7 +1,7 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 
 <div class="bg-pink-50">
-    <div x-data="{ sidebarOpen: false }" class="relative md:flex h-screen">
+    <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
         <!-- START: Overlay for mobile -->
         <div x-show="sidebarOpen" 
@@ -26,7 +26,7 @@
             <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
             <!-- START: Page Content -->
-            <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <main class="flex-1 p-4 md:p-8">
                 <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
                     <div id="calendar-container" class="h-full"></div>
                 </div>

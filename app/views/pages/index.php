@@ -20,7 +20,7 @@
         <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
         <!-- START: Main Content Area -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col w-0">
 
             <!-- เรียกใช้ Top Navigation -->
             <?php include APPROOT . '/views/inc/topnav.php'; ?>
@@ -28,7 +28,7 @@
             <!-- START: Page Content -->
             <main class="flex-1 p-4 md:p-8">
                 <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
-                    <div id="calendar-container" class="h-full"></div>
+                    <div id="calendar-container" class="h-full min-w-[700px]">
                 </div>
             </main>
             <!-- END: Page Content -->

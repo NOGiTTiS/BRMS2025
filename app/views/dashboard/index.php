@@ -7,7 +7,7 @@
         <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
         <!-- START: Main Content Area -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col w-0">
 
             <!-- Top Navigation -->
             <?php include APPROOT . '/views/inc/topnav.php'; ?>

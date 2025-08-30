@@ -53,4 +53,25 @@ class User {
             return false;
         }
     }
+
+    // ฟังก์ชันสำหรับเข้าสู่ระบบ
+    public function login($username_email, $password){
+        // อนุญาตให้ผู้ใช้กรอกได้ทั้ง username หรือ email
+        $this->db->query('SELECT * FROM users WHERE username = :username_email OR email = :username_email');
+        $this->db->bind(':username_email', $username_email);
+
+        $row = $this->db->single();
+
+        if($row){
+            $hashed_password = $row->password;
+            // ตรวจสอบรหัสผ่านที่กรอกกับรหัสผ่านที่เข้ารหัสไว้ในฐานข้อมูล
+            if(password_verify($password, $hashed_password)){
+                return $row; // คืนค่าข้อมูลผู้ใช้ทั้งหมดถ้าถูกต้อง
+            } else {
+                return false; // รหัสผ่านผิด
+            }
+        } else {
+            return false; // ไม่พบผู้ใช้
+        }
+    }
 }

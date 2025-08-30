@@ -66,7 +66,8 @@ class UserController extends Controller {
 
                 // เรียกใช้ฟังก์ชัน register ใน Model
                 if($this->userModel->register($data)){
-                    flash('register_success', 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+                    // เปลี่ยนพารามิเตอร์ที่ 3 ให้เป็น 'swal-success'
+                    flash('register_success', 'สมัครสมาชิกสำเร็จ!', 'swal-success'); 
                     header('location: ' . URLROOT . '/user/login');
                 } else {
                     die('มีบางอย่างผิดพลาด');
@@ -86,10 +87,64 @@ class UserController extends Controller {
         }
     }
 
-    // สร้างเมธอด login ว่างๆ ไว้ก่อน
     public function login(){
-        // โค้ดสำหรับหน้า login จะสร้างในขั้นตอนถัดไป
-         $data = ['username_email' => '', 'password' => '', 'username_email_err' => '', 'password_err' => '',];
-        $this->view('users/login', $data);
+        // ตรวจสอบว่าเป็น POST request หรือไม่
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // กรองข้อมูลด้วย htmlspecialchars เพื่อความปลอดภัย
+            $sanitized_post = [];
+            foreach($_POST as $key => $value){
+                $sanitized_post[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+
+            $data = [
+                'username_email' => trim($sanitized_post['username_email']),
+                'password' => trim($sanitized_post['password']),
+                'username_email_err' => '',
+                'password_err' => '',      
+            ];
+
+            // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
+            if(empty($data['username_email'])){
+                $data['username_email_err'] = 'กรุณากรอกชื่อผู้ใช้หรืออีเมล';
+            }
+            if(empty($data['password'])){
+                $data['password_err'] = 'กรุณากรอกรหัสผ่าน';
+            }
+
+            // ตรวจสอบว่าไม่มี error
+            if(empty($data['username_email_err']) && empty($data['password_err'])){
+                // เรียกใช้ model login
+                $loggedInUser = $this->userModel->login($data['username_email'], $data['password']);
+
+                if($loggedInUser){
+                    // สร้าง Session
+                    createUserSession($loggedInUser);
+                    // พาไปยังหน้า Dashboard (ตอนนี้ไปหน้าแรกก่อน)
+                    header('location: ' . URLROOT);
+                } else {
+                    $data['password_err'] = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+                    $this->view('users/login', $data);
+                }
+            } else {
+                // โหลด view พร้อม error
+                $this->view('users/login', $data);
+            }
+        } else {
+            // โหลดฟอร์มเปล่า
+            $data = [
+                'title' => 'เข้าสู่ระบบ',
+                'username_email' => '',
+                'password' => '',
+                'username_email_err' => '',
+                'password_err' => '',
+            ];
+            $this->view('users/login', $data);
+        }
+    }
+    
+    // สร้างเมธอด logout
+    public function logout(){
+        logout(); // เรียกใช้ helper
+        header('location: ' . URLROOT . '/user/login'); // กลับไปหน้า login
     }
 }

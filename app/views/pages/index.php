@@ -16,71 +16,14 @@
         </div>
         <!-- END: Overlay for mobile -->
 
-        <!-- START: Sidebar -->
-        <aside id="sidebar"
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="absolute inset-y-0 left-0 bg-pink-600 text-white w-64 p-4 space-y-6 z-20
-                   transform transition duration-300 ease-in-out
-                   md:relative md:translate-x-0">
-            
-            <!-- Logo -->
-            <a href="<?php echo URLROOT; ?>" class="text-white text-2xl font-bold flex items-center space-x-2">
-                <span>BRMS</span>
-            </a>
-
-            <!-- Navigation Links -->
-            <nav>
-                <ul>
-                    <?php if(isLoggedIn()) : ?>
-                        <!-- เมนูหลัง Login -->
-                        <li class="mb-2"><a href="#" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors"><span>📊</span><span class="ml-2">Dashboard</span></a></li>
-                        <li class="mb-2"><a href="<?php echo URLROOT; ?>" class="flex items-center p-2 bg-pink-700 rounded transition-colors"><span>📅</span><span class="ml-2">ปฏิทิน</span></a></li>
-                        <li class="mb-2"><a href="<?php echo URLROOT; ?>/user/logout" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors"><span>🚪</span><span class="ml-2">ออกจากระบบ</span></a></li>
-                    <?php else : ?>
-                        <!-- เมนูก่อน Login -->
-                        <li class="mb-2"><a href="<?php echo URLROOT; ?>" class="flex items-center p-2 bg-pink-700 rounded transition-colors"><span>📅</span><span class="ml-2">ปฏิทิน</span></a></li>
-                        <li class="mb-2"><a href="<?php echo URLROOT; ?>/user/login" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors"><span>🔒</span><span class="ml-2">เข้าสู่ระบบ</span></a></li>
-                        <li class="mb-2"><a href="<?php echo URLROOT; ?>/user/register" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors"><span>👤</span><span class="ml-2">สมัครสมาชิก</span></a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </aside>
-        <!-- END: Sidebar -->
+        <!-- เรียกใช้ Sidebar -->
+        <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
         <!-- START: Main Content Area -->
         <div class="flex-1 flex flex-col">
 
-            <!-- START: Top Navigation -->
-            <header class="flex justify-between items-center p-4 bg-white shadow-md">
-                <!-- Mobile Menu Button -->
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 focus:outline-none md:hidden">
-                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                </button>
-                
-                <!-- Page Title -->
-                <h1 class="text-xl font-semibold text-gray-700 ml-2 md:ml-0">
-                    <?php echo $data['title']; ?>
-                </h1>
-
-                <!-- Right side -->
-                <div>
-                    <?php if(isLoggedIn()) : ?>
-                        <div class="flex items-center space-x-4">
-                            <span class="text-gray-700">สวัสดี, <?php echo $_SESSION['user_name']; ?></span>
-                            <a href="<?php echo URLROOT; ?>/user/logout" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition">
-                                ออกจากระบบ
-                            </a>
-                        </div>
-                    <?php else : ?>
-                        <a href="<?php echo URLROOT; ?>/user/login" class="bg-pink-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-pink-600 transition">
-                            เข้าสู่ระบบ
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </header>
-            <!-- END: Top Navigation -->
+            <!-- เรียกใช้ Top Navigation -->
+            <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
             <!-- START: Page Content -->
             <main class="flex-1 p-4 md:p-8 overflow-y-auto">

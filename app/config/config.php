@@ -13,3 +13,7 @@ define('APPROOT', dirname(dirname(__FILE__)));
 define('URLROOT', 'http://localhost/brms/public'); // <-- แก้ไขให้ตรงกับ URL โปรเจคของคุณ
 // Site Name
 define('SITENAME', 'BRMS - Booking Room Management System');
+
+// --- App Environment ---
+// ตั้งเป็น 'dev' ตอนกำลังพัฒนา, เปลี่ยนเป็น 'prod' ตอนใช้งานจริง
+define('APP_ENV', 'dev');

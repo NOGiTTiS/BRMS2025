@@ -1,25 +1,37 @@
 <?php
-  class PageController extends Controller { // <--- เปลี่ยนชื่อคลาสตรงนี้
-    private $bookingModel;
+class PageController extends Controller {
 
-    public function __construct(){
-      // ในอนาคตเราจะโหลด Model ที่นี่
-      // $this->bookingModel = $this->model('Booking');
-    }
-
-    // เมธอดเริ่มต้นที่ Core.php จะเรียกใช้
+    // เมธอดสำหรับหน้าแรกสุด (Landing Page)
     public function index(){
-      // ดึงข้อมูลการจองทั้งหมด (เราจะทำฟังก์ชันนี้ใน Model ต่อไป)
-      // $bookings = $this->bookingModel->getAllBookings();
+        // ถ้าผู้ใช้ล็อกอินอยู่แล้ว ให้พาไปที่ Dashboard
+        if(isLoggedIn()){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+        
+        // ถ้ายังไม่ล็อกอิน ให้แสดงหน้าปฏิทินสาธารณะ
+        $data = [
+            'title' => 'ปฏิทินการจองห้องประชุม',
+            'active_menu' => 'calendar'
+        ];
 
-      // เตรียมข้อมูลที่จะส่งไปให้ View
-      $data = [
-        'title' => 'ปฏิทินการจองห้องประชุม',
-        'active_menu' => 'calendar', 
-        // 'bookings' => $bookings
-      ];
-
-      // โหลด View พร้อมส่งข้อมูลไปด้วย
-      $this->view('pages/index', $data);
+        $this->view('pages/index', $data);
     }
-  }
+
+    // เมธอดใหม่สำหรับแสดงหน้าปฏิทินของผู้ใช้ที่ล็อกอินแล้ว
+    public function calendar(){
+        // ป้องกัน: ถ้ายังไม่ได้ล็อกอิน ให้เด้งไปหน้า login
+        if(!isLoggedIn()){
+            header('location: ' . URLROOT . '/user/login');
+            exit();
+        }
+
+        // แสดงหน้าปฏิทินตามปกติ
+        $data = [
+            'title' => 'ปฏิทินการจองห้องประชุม',
+            'active_menu' => 'calendar'
+        ];
+
+        $this->view('pages/index', $data);
+    }
+}

@@ -47,8 +47,7 @@
                 <?php endif; ?>
 
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'bg-pink-700' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/page/calendar" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'bg-pink-700' : ''; ?>">
                         <span>📅</span><span class="ml-2">ปฏิทิน</span>
                     </a>
                 </li>

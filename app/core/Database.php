@@ -1,10 +1,10 @@
 <?php
   /*
    * PDO Database Class
-   * เชื่อมต่อฐานข้อมูล
-   * สร้าง Prepared Statements
-   * Bind Values
-   * Return rows and results
+   * Connects to database
+   * Creates prepared statements
+   * Binds values
+   * Returns rows and results
    */
   class Database {
     private $host = DB_HOST;
@@ -12,19 +12,19 @@
     private $pass = DB_PASS;
     private $dbname = DB_NAME;
 
-    private $dbh; // Database Handler
-    private $stmt; // Statement
+    private $dbh;
+    private $stmt;
     private $error;
 
     public function __construct(){
-      // Set DSN (Data Source Name)
+      // Set DSN
       $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
       $options = array(
-        PDO::ATTR_PERSISTENT => true, // ตรวจสอบว่ามีการเชื่อมต่ออยู่แล้วหรือไม่ เพื่อประสิทธิภาพที่ดีขึ้น
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION // แสดง error ที่สวยงามขึ้น
+        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
       );
 
-      // สร้าง PDO instance
+      // Create PDO instance
       try{
         $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
       } catch(PDOException $e){
@@ -33,12 +33,12 @@
       }
     }
 
-    // เตรียม statement ด้วย query
+    // Prepare statement with query
     public function query($sql){
       $this->stmt = $this->dbh->prepare($sql);
     }
 
-    // ผูกค่า (Bind values)
+    // Bind values
     public function bind($param, $value, $type = null){
       if(is_null($type)){
         switch(true){
@@ -63,20 +63,38 @@
       return $this->stmt->execute();
     }
 
-    // ดึงผลลัพธ์ทั้งหมดเป็น array of objects
+    // Get result set as array of objects
     public function resultSet(){
       $this->execute();
       return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    // ดึงผลลัพธ์แค่แถวเดียวเป็น object
+    // Get single record as object
     public function single(){
       $this->execute();
       return $this->stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    // นับจำนวนแถว
+    // Get row count
     public function rowCount(){
       return $this->stmt->rowCount();
+    }
+
+    // --- Transaction Functions ---
+    public function beginTransaction(){
+        return $this->dbh->beginTransaction();
+    }
+
+    public function commit(){
+        return $this->dbh->commit();
+    }
+
+    public function rollBack(){
+        return $this->dbh->rollBack();
+    }
+
+    // --- Last Insert ID Function ---
+    public function lastInsertId(){
+        return $this->dbh->lastInsertId();
     }
   }

@@ -16,6 +16,10 @@
     <div>
         <?php if(isLoggedIn()) : ?>
             <div class="flex items-center space-x-4">
+                <!-- ปุ่มจองห้อง -->
+                <a href="<?php echo URLROOT; ?>/booking/create" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition">
+                    จองห้องประชุม
+                </a>
                 <span class="text-gray-700">สวัสดี, <?php echo $_SESSION['user_name']; ?></span>
                 <a href="<?php echo URLROOT; ?>/user/logout" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition">
                     ออกจากระบบ

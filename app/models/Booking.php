@@ -39,4 +39,52 @@ class Booking {
         $results = $this->db->resultSet(); // <--- แก้ไขจุดเป็นลูกศร
         return $results;
     }
+
+    // สร้างการจองใหม่
+    public function createBooking($data){
+        $this->db->beginTransaction();
+
+        try {
+            // 1. เพิ่มข้อมูลลงในตาราง bookings
+            $this->db->query('
+                INSERT INTO bookings (user_id, room_id, subject, department, phone, attendees, start_time, end_time, note, status, room_layout_image) 
+                VALUES (:user_id, :room_id, :subject, :department, :phone, :attendees, :start_time, :end_time, :note, :status, :room_layout_image)
+            ');
+            $this->db->bind(':user_id', $data['user_id']);
+            $this->db->bind(':room_id', $data['room_id']);
+            $this->db->bind(':subject', $data['subject']);
+            $this->db->bind(':department', $data['department']);
+            $this->db->bind(':phone', $data['phone']);
+            $this->db->bind(':attendees', $data['attendees']);
+            $this->db->bind(':start_time', $data['start_time']);
+            $this->db->bind(':end_time', $data['end_time']);
+            $this->db->bind(':note', $data['note']);
+            $this->db->bind(':status', 'pending');
+            $this->db->bind(':room_layout_image', $data['room_layout_image']);
+            
+            $this->db->execute();
+            
+            // 2. ดึง ID ของการจองที่เพิ่งสร้าง
+            $bookingId = $this->db->lastInsertId();
+
+            // 3. เพิ่มข้อมูลอุปกรณ์ (ถ้ามี)
+            if(!empty($data['equipments'])){
+                $this->db->query('INSERT INTO booking_equipments (booking_id, equipment_id) VALUES (:booking_id, :equipment_id)');
+                
+                foreach($data['equipments'] as $equipmentId){
+                    $this->db->bind(':booking_id', $bookingId);
+                    $this->db->bind(':equipment_id', $equipmentId);
+                    $this->db->execute();
+                }
+            }
+            
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            // แสดง error เพื่อดีบัก (เมื่อเสร็จแล้วให้เปลี่ยนเป็น return false;)
+            die('Database Error: ' . $e->getMessage()); 
+        }
+    }
 }

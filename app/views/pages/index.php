@@ -27,6 +27,7 @@
 
             <!-- START: Page Content -->
             <main class="flex-1 p-4 md:p-8">
+                <?php flash('booking_message'); ?>
                 <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
                     <div id="calendar-container" class="h-full min-w-[700px]">
                 </div>

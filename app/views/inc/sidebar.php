@@ -21,7 +21,13 @@
                         <span>📊</span><span class="ml-2">Dashboard</span>
                     </a>
                 </li>
-                
+
+                <!-- เมนูสำหรับผู้ใช้ทั่วไป -->
+                <li class="mb-2">
+                    <a href="<?php echo URLROOT; ?>/mybooking" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo ($data['active_menu'] == 'my_bookings') ? 'bg-pink-700' : ''; ?>">
+                        <span>📖</span><span class="ml-2">การจองของฉัน</span>
+                    </a>
+                </li>                
 
                 <!-- เมนูสำหรับ Admin เท่านั้น -->
                 <?php if($_SESSION['user_role'] == 'admin') : ?>

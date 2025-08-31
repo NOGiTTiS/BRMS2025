@@ -140,4 +140,19 @@ class Booking {
         $this->db->bind(':id', $id);
         return $this->db->single();
     }
+
+    // ดึงข้อมูลการจองทั้งหมดของผู้ใช้คนเดียว
+    public function getBookingsByUserId($user_id){
+        $this->db->query('
+            SELECT 
+                b.*, 
+                r.name as room_name
+            FROM bookings as b
+            JOIN rooms as r ON b.room_id = r.id
+            WHERE b.user_id = :user_id
+            ORDER BY b.created_at DESC
+        ');
+        $this->db->bind(':user_id', $user_id);
+        return $this->db->resultSet();
+    }
 }

@@ -120,4 +120,24 @@ class Booking {
         $this->db->bind(':id', $booking_id);
         return $this->db->execute();
     }
+
+    // ดึงข้อมูลการจองแบบละเอียด 1 รายการด้วย ID
+    public function getBookingById($id){
+        $this->db->query('
+            SELECT 
+                b.*,
+                r.name AS room_name,
+                CONCAT(u.first_name, " ", u.last_name) AS user_full_name,
+                GROUP_CONCAT(e.name SEPARATOR ", ") AS equipments_list
+            FROM bookings AS b
+            JOIN rooms AS r ON b.room_id = r.id
+            JOIN users AS u ON b.user_id = u.id
+            LEFT JOIN booking_equipments AS be ON b.id = be.booking_id
+            LEFT JOIN equipments AS e ON be.equipment_id = e.id
+            WHERE b.id = :id
+            GROUP BY b.id
+        ');
+        $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
 }

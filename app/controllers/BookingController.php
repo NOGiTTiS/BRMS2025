@@ -27,6 +27,29 @@ class BookingController extends Controller
         $this->view('bookings/index', $data);
     }
 
+    public function show($id){
+        // ป้องกัน: ต้องเป็น Admin เท่านั้น
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+            $booking = $this->bookingModel->getBookingById($id);
+    
+        if(!$booking){
+            // ถ้าหา booking ไม่เจอ ให้กลับไปหน้ารายการ
+            header('location: ' . URLROOT . '/booking');
+            exit();
+        }
+
+        $data = [
+            'title' => 'รายละเอียดการจอง',
+            'active_menu' => 'manage_bookings',
+            'booking' => $booking
+        ];
+
+        $this->view('bookings/show', $data);
+    }
+
     // เมธอดนี้จะทำหน้าที่เป็น API Endpoint
     public function getEvents()
     {

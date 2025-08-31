@@ -22,7 +22,11 @@
                         <tbody>
                             <?php foreach($data['bookings'] as $booking) : ?>
                             <tr>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><?php echo $booking->subject; ?></td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <a href="<?php echo URLROOT; ?>/booking/show/<?php echo $booking->id; ?>" class="text-gray-900 hover:text-pink-600 font-semibold">
+                                        <?php echo $booking->subject; ?>
+                                    </a>
+                                </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><?php echo $booking->user_username; ?></td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><?php echo $booking->room_name; ?></td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><?php echo date('d/m/Y H:i', strtotime($booking->start_time)); ?></td>

@@ -87,4 +87,37 @@ class Booking {
             die('Database Error: ' . $e->getMessage()); 
         }
     }
+
+    // ดึงข้อมูลการจองทั้งหมดสำหรับหน้า Admin
+    public function getAllBookings(){
+        $this->db->query('
+            SELECT 
+                b.*, 
+                r.name as room_name,
+                u.username as user_username
+            FROM bookings as b
+            JOIN rooms as r ON b.room_id = r.id
+            JOIN users as u ON b.user_id = u.id
+            ORDER BY b.created_at DESC
+        ');
+        return $this->db->resultSet();
+    }
+
+    // อนุมัติการจอง
+    public function approveBooking($booking_id, $admin_id){
+        $this->db->query('UPDATE bookings SET status = :status, admin_id = :admin_id WHERE id = :id');
+        $this->db->bind(':status', 'approved');
+        $this->db->bind(':admin_id', $admin_id);
+        $this->db->bind(':id', $booking_id);
+        return $this->db->execute();
+    }
+
+    // ปฏิเสธการจอง
+    public function rejectBooking($booking_id, $admin_id){
+        $this->db->query('UPDATE bookings SET status = :status, admin_id = :admin_id WHERE id = :id');
+        $this->db->bind(':status', 'rejected');
+        $this->db->bind(':admin_id', $admin_id);
+        $this->db->bind(':id', $booking_id);
+        return $this->db->execute();
+    }
 }

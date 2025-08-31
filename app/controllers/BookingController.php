@@ -10,6 +10,23 @@ class BookingController extends Controller
         $this->equipmentModel = $this->model('Equipment');
     }
 
+    // หน้าแสดงรายการจองทั้งหมด (สำหรับ Admin)
+    public function index(){
+        // ป้องกัน: ต้องเป็น Admin เท่านั้น
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        $bookings = $this->bookingModel->getAllBookings();
+        $data = [
+            'title' => 'จัดการการจองทั้งหมด',
+            'active_menu' => 'manage_bookings',
+            'bookings' => $bookings
+        ];
+        $this->view('bookings/index', $data);
+    }
+
     // เมธอดนี้จะทำหน้าที่เป็น API Endpoint
     public function getEvents()
     {
@@ -126,6 +143,42 @@ class BookingController extends Controller
                 // ...
             ];
             $this->view('bookings/create', $data);
+        }
+    }
+
+    // อนุมัติการจอง (สำหรับ Admin)
+    public function approve($id){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->bookingModel->approveBooking($id, $_SESSION['user_id'])){
+                flash('booking_manage_message', 'อนุมัติการจองสำเร็จ', 'swal-success');
+                header('location: ' . URLROOT . '/booking');
+            } else {
+                die('Something went wrong');
+            }
+        } else {
+            header('location: ' . URLROOT . '/booking');
+        }
+    }
+
+    // ปฏิเสธการจอง (สำหรับ Admin)
+    public function reject($id){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->bookingModel->rejectBooking($id, $_SESSION['user_id'])){
+                flash('booking_manage_message', 'ปฏิเสธการจองเรียบร้อย', 'swal-success');
+                header('location: ' . URLROOT . '/booking');
+            } else {
+                die('Something went wrong');
+            }
+        } else {
+            header('location: ' . URLROOT . '/booking');
         }
     }
 }

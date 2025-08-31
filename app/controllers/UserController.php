@@ -6,6 +6,105 @@ class UserController extends Controller {
         $this->userModel = $this->model('User');
     }
 
+    // หน้าแสดงรายการผู้ใช้ทั้งหมด (สำหรับ Admin)
+    public function index(){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        $users = $this->userModel->getUsers();
+        $data = [
+            'title' => 'จัดการผู้ใช้',
+            'active_menu' => 'users',
+            'users' => $users
+        ];
+        $this->view('users/index', $data);
+    }
+
+    // หน้าแก้ไขข้อมูลผู้ใช้ (สำหรับ Admin)
+    public function edit($id){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $sanitized_post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $data = [
+                'id' => $id,
+                'first_name' => trim($sanitized_post['first_name']),
+                'last_name' => trim($sanitized_post['last_name']),
+                'email' => trim($sanitized_post['email']),
+                'role' => $sanitized_post['role'],
+                'password' => trim($sanitized_post['password']), // รหัสผ่านใหม่ (ถ้ามี)
+                'first_name_err' => '', 'email_err' => ''
+            ];
+
+            // Validation
+            if(empty($data['first_name'])){ $data['first_name_err'] = 'กรุณากรอกชื่อ'; }
+            if(empty($data['email'])){ $data['email_err'] = 'กรุณากรอกอีเมล'; }
+
+            if(empty($data['first_name_err']) && empty($data['email_err'])){
+                // ถ้ามีการกรอกรหัสผ่านใหม่ ให้เข้ารหัส
+                if(!empty($data['password'])){
+                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                }
+
+                if($this->userModel->updateUser($data)){
+                    flash('user_message', 'อัปเดตข้อมูลผู้ใช้สำเร็จ', 'swal-success');
+                    header('location: ' . URLROOT . '/user');
+                } else {
+                    die('Something went wrong');
+                }
+            } else {
+                // ถ้ามี error ให้โหลด View กลับไปพร้อมข้อมูล
+                $this->view('users/edit', $data);
+            }
+        } else {
+            // โหลดข้อมูลผู้ใช้เดิมมาแสดงในฟอร์ม
+            $user = $this->userModel->getUserById($id);
+            $data = [
+                'title' => 'แก้ไขข้อมูลผู้ใช้',
+                'active_menu' => 'users',
+                'id' => $id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'first_name_err' => '', 'email_err' => ''
+            ];
+            $this->view('users/edit', $data);
+        }
+    }
+
+    // ลบผู้ใช้ (สำหรับ Admin)
+    public function delete($id){
+         if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // ป้องกันไม่ให้ Admin ลบบัญชีตัวเอง
+            if($id == $_SESSION['user_id']){
+                flash('user_message', 'ไม่สามารถลบบัญชีของตัวเองได้', 'swal-error');
+                header('location: ' . URLROOT . '/user');
+                exit();
+            }
+
+            if($this->userModel->deleteUser($id)){
+                flash('user_message', 'ลบผู้ใช้สำเร็จ', 'swal-success');
+                header('location: ' . URLROOT . '/user');
+            } else {
+                flash('user_message', 'ลบผู้ใช้ไม่สำเร็จ! อาจเป็นเพราะผู้ใช้คนนี้มีการจองที่ยังค้างอยู่ในระบบ', 'swal-error');
+                header('location: ' . URLROOT . '/user');
+            }
+        } else {
+            header('location: ' . URLROOT . '/user');
+        }
+    }
+
     // เมธอดสำหรับหน้าสมัครสมาชิก
     public function register(){
         // ตรวจสอบว่าเป็น POST request (กดปุ่มส่งฟอร์ม) หรือไม่

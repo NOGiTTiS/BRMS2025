@@ -33,6 +33,11 @@
                 <!-- เมนูสำหรับ Admin เท่านั้น -->
                 <?php if($_SESSION['user_role'] == 'admin') : ?>
                 <li class="mb-2">
+                    <a href="<?php echo URLROOT; ?>/user" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo ($data['active_menu'] == 'users') ? 'bg-pink-700' : ''; ?>">
+                        <span>👥</span><span class="ml-2">จัดการผู้ใช้</span>
+                    </a>
+                </li>    
+                <li class="mb-2">
                     <a href="<?php echo URLROOT; ?>/room" 
                     class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'rooms') ? 'bg-pink-700' : ''; ?>">
                         <span>🏢</span><span class="ml-2">จัดการห้องประชุม</span>

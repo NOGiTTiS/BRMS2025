@@ -74,4 +74,52 @@ class User {
             return false; // ไม่พบผู้ใช้
         }
     }
+
+    // ดึงข้อมูลผู้ใช้ทั้งหมด
+    public function getUsers(){
+        $this->db->query('SELECT id, username, first_name, last_name, email, role, created_at FROM users ORDER BY created_at DESC');
+        return $this->db->resultSet();
+    }
+
+    // ดึงข้อมูลผู้ใช้คนเดียวด้วย ID
+    public function getUserById($id){
+        $this->db->query('SELECT id, username, first_name, last_name, email, role FROM users WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
+
+    // อัปเดตข้อมูลผู้ใช้ (โดย Admin)
+    public function updateUser($data){
+        // ตรวจสอบว่ามีการส่งรหัสผ่านใหม่มาหรือไม่
+        if(!empty($data['password'])){
+            $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, role = :role, password = :password WHERE id = :id');
+            $this->db->bind(':password', $data['password']);
+        } else {
+            $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, role = :role WHERE id = :id');
+        }
+
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':first_name', $data['first_name']);
+        $this->db->bind(':last_name', $data['last_name']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':role', $data['role']);
+
+        return $this->db->execute();
+    }
+
+    // ลบผู้ใช้ (ต้องระวังเรื่อง Foreign Key Constraints กับตาราง bookings)
+    public function deleteUser($id){
+        // หมายเหตุ: หากผู้ใช้คนนี้เคยมีการจอง จะไม่สามารถลบได้โดยตรงเพราะติด Foreign Key
+        // ในระบบจริงอาจจะต้องเปลี่ยนเป็นการ "ปิดการใช้งาน" บัญชีแทนการลบ
+        // แต่ในที่นี้เราจะใช้การลบแบบตรงไปตรงมา
+        $this->db->query('DELETE FROM users WHERE id = :id');
+        $this->db->bind(':id', $id);
+
+        try {
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            // ถ้าเกิด Error (เช่น ติด Foreign Key) ให้คืนค่า false
+            return false;
+        }
+    }
 }

@@ -1,3 +1,7 @@
 body.swal2-shown:not(.swal2-height-auto) {
   padding-right: 0px !important;
 }
+
+.active-menu {
+  background-color: rgba(0, 0, 0, 0.2); /* ทำให้สีเข้มขึ้นเล็กน้อย */
+}

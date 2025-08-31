@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $data['title']; ?> | <?php echo SITENAME; ?></title>
+    <!-- เปลี่ยน Title -->
+    <title><?php echo $data['title']; ?> | <?php echo setting('site_name'); ?></title>
+    <!-- เพิ่ม Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?php echo URLROOT; ?>/uploads/favicons/<?php echo setting('site_favicon'); ?>?v=<?php echo time(); ?>">
     
     <!-- CSS & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>

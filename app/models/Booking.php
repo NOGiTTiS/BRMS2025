@@ -59,7 +59,8 @@ class Booking {
             $this->db->bind(':start_time', $data['start_time']);
             $this->db->bind(':end_time', $data['end_time']);
             $this->db->bind(':note', $data['note']);
-            $this->db->bind(':status', 'pending');
+            // ใช้ค่าจาก setting helper
+            $this->db->bind(':status', setting('default_booking_status', 'pending'));
             $this->db->bind(':room_layout_image', $data['room_layout_image']);
             
             $this->db->execute();

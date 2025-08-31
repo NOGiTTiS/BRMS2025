@@ -155,4 +155,40 @@ class Booking {
         $this->db->bind(':user_id', $user_id);
         return $this->db->resultSet();
     }
+
+    // ตรวจสอบว่าช่วงเวลาที่ต้องการจองนั้นว่างหรือไม่
+    public function isTimeSlotAvailable($room_id, $start_time, $end_time, $exclude_booking_id = null){
+        // Logic: ค้นหาการจองที่ "อนุมัติแล้ว" ของห้องนี้
+        // ซึ่งช่วงเวลาคาบเกี่ยวกับช่วงเวลาใหม่ที่ต้องการจอง
+        // โดยที่ (เวลาเริ่มใหม่ < เวลาจบเก่า) AND (เวลาจบใหม่ > เวลาเริ่มเก่า)
+        
+        $sql = '
+            SELECT id FROM bookings
+            WHERE room_id = :room_id
+            AND status = :status
+            AND :start_time < end_time
+            AND :end_time > start_time
+        ';
+        
+        // ถ้ามีการแก้ไขการจอง, ให้ยกเว้น ID ของตัวเองออกจากการตรวจสอบ
+        if ($exclude_booking_id) {
+            $sql .= ' AND id != :exclude_booking_id';
+        }
+
+        $this->db->query($sql);
+        $this->db->bind(':room_id', $room_id);
+        $this->db->bind(':status', 'approved');
+        $this->db->bind(':start_time', $start_time);
+        $this->db->bind(':end_time', $end_time);
+
+        if ($exclude_booking_id) {
+            $this->db->bind(':exclude_booking_id', $exclude_booking_id);
+        }
+
+        $this->db->execute();
+
+        // ถ้าผลลัพธ์มีจำนวนแถว > 0 แสดงว่ามีคนจองแล้ว (ไม่ว่าง)
+        // ถ้าเป็น 0 แสดงว่าว่าง
+        return $this->db->rowCount() === 0;
+    }
 }

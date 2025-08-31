@@ -117,6 +117,19 @@ class BookingController extends Controller
             if(empty($data['room_id'])){ $data['room_id_err'] = 'กรุณาเลือกห้องประชุม'; }
             // ... add more validation as needed
 
+            // --- เพิ่มการตรวจสอบการจองซ้อน ---
+            if(empty($data['room_id_err']) && !empty($data['start_date']) && !empty($data['start_time']) && !empty($data['end_date']) && !empty($data['end_time'])){
+                
+                // 1. สร้างค่า DATETIME ที่สมบูรณ์ขึ้นมาก่อน
+                $full_start_time = $data['start_date'] . ' ' . $data['start_time'];
+                $full_end_time = $data['end_date'] . ' ' . $data['end_time'];
+
+                // 2. ส่งค่าที่สมบูรณ์นี้ไปให้ Model ตรวจสอบ
+                if(!$this->bookingModel->isTimeSlotAvailable($data['room_id'], $full_start_time, $full_end_time)){
+                    $data['room_id_err'] = 'ช่วงเวลานี้สำหรับห้องที่เลือกไม่ว่างแล้ว กรุณาตรวจสอบปฏิทินและเลือกเวลาใหม่';
+                }
+            }
+
             // 5. ตรวจสอบว่าไม่มี error
             if(empty($data['subject_err']) && empty($data['room_id_err']) && empty($data['layout_err'])){
                 

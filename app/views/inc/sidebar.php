@@ -21,23 +21,26 @@
                         <span>📊</span><span class="ml-2">Dashboard</span>
                     </a>
                 </li>
-
+                
                 <!-- เมนูสำหรับผู้ใช้ทั่วไป -->
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/mybooking" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo ($data['active_menu'] == 'my_bookings') ? 'bg-pink-700' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/mybooking" 
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'my_bookings') ? 'bg-pink-700' : ''; ?>">
                         <span>📖</span><span class="ml-2">การจองของฉัน</span>
                     </a>
-                </li>                
+                </li>
 
                 <!-- เมนูสำหรับ Admin เท่านั้น -->
                 <?php if($_SESSION['user_role'] == 'admin') : ?>
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/room" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo ($data['active_menu'] == 'rooms') ? 'bg-pink-700' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/room" 
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'rooms') ? 'bg-pink-700' : ''; ?>">
                         <span>🏢</span><span class="ml-2">จัดการห้องประชุม</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/booking" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'manage_bookings') ? 'bg-pink-700' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/booking" 
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'manage_bookings') ? 'bg-pink-700' : ''; ?>">
                         <span>📋</span><span class="ml-2">จัดการการจอง</span>
                     </a>
                 </li>
@@ -78,5 +81,6 @@
             <?php endif; ?>
         </ul>
     </nav>
+
 </aside>
 <!-- END: Sidebar -->

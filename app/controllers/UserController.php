@@ -119,8 +119,9 @@ class UserController extends Controller {
                 if($loggedInUser){
                     // สร้าง Session
                     createUserSession($loggedInUser);
-                    // พาไปยังหน้า Dashboard (ตอนนี้ไปหน้าแรกก่อน)
-                    header('location: ' . URLROOT);
+                    // เปลี่ยนเส้นทางไปหน้า Dashboard โดยตรง
+                    header('location: ' . URLROOT . '/dashboard');
+                    exit(); // เพิ่ม exit() เพื่อความปลอดภัย
                 } else {
                     $data['password_err'] = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
                     $this->view('users/login', $data);

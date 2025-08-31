@@ -32,8 +32,14 @@
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
                                 <a href="<?php echo URLROOT; ?>/room/edit/<?php echo $room->id; ?>" class="text-indigo-600 hover:text-indigo-900 mr-4">แก้ไข</a>
-                                <form action="<?php echo URLROOT; ?>/room/delete/<?php echo $room->id; ?>" method="post" class="inline-block">
-                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบห้องนี้?')">ลบ</button>
+                                <!-- ให้ ID กับ form เพื่อให้ JavaScript เรียกใช้ได้ -->
+                                <form id="delete-form-<?php echo $room->id; ?>" action="<?php echo URLROOT; ?>/room/delete/<?php echo $room->id; ?>" method="post" class="inline-block">
+                                    <!-- เปลี่ยน type เป็น button และลบ onclick เดิมออก -->
+                                    <button type="button" 
+                                            onclick="confirmDelete(<?php echo $room->id; ?>, '<?php echo htmlspecialchars($room->name, ENT_QUOTES); ?>')"
+                                            class="text-red-600 hover:text-red-900">
+                                        ลบ
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -44,4 +50,25 @@
         </main>
     </div>
 </div>
+
+<script>
+function confirmDelete(id, roomName) {
+    Swal.fire({
+        title: `คุณแน่ใจหรือไม่?`,
+        text: `คุณต้องการลบห้อง "${roomName}" ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // ถ้าผู้ใช้กดยืนยัน ให้ส่งฟอร์มที่มี ID ตรงกัน
+            document.getElementById('delete-form-' + id).submit();
+        }
+    })
+}
+</script>
+
 <?php require APPROOT . '/views/inc/footer.php'; ?>

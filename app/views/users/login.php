@@ -30,6 +30,13 @@
         <div class="text-center">
             <a href="<?php echo URLROOT; ?>/user/register" class="text-sm text-pink-100 hover:underline">ยังไม่มีบัญชี? สมัครสมาชิก</a>
         </div>
+
+        <!-- เพิ่มส่วนนี้เข้ามา -->
+        <p class="mt-6 text-center text-sm text-white/70">
+            <?php echo htmlspecialchars(str_replace('{year}', date('Y'), setting('copyright_text', '© {year} BRMS Project'))); ?>
+        </p>
+        <!-- จบส่วนที่เพิ่ม -->
+         
     </div>
 </div>
 <?php require APPROOT . '/views/inc/footer.php'; ?>

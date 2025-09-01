@@ -25,4 +25,31 @@ class MyBookingController extends Controller {
         
         $this->view('my_bookings/index', $data);
     }
+
+    // ยกเลิก/ลบ การจองของตัวเอง
+    public function delete($id){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // 1. ดึงข้อมูลการจองมาก่อนเพื่อตรวจสอบความเป็นเจ้าของ
+            $booking = $this->bookingModel->getBookingById($id);
+            
+            // 2. ตรวจสอบว่าเป็นเจ้าของการจองนั้นจริงหรือไม่
+            if($booking && $booking->user_id == $_SESSION['user_id']){
+                // 3. ถ้าใช่, ให้ทำการลบ
+                if($this->bookingModel->deleteBooking($id)){
+                    flash('mybooking_message', 'ยกเลิกการจองสำเร็จ', 'swal-success');
+                } else {
+                    flash('mybooking_message', 'เกิดข้อผิดพลาดในการยกเลิกการจอง', 'swal-error');
+                }
+            } else {
+                // กรณีพยายามลบการจองของคนอื่น
+                flash('mybooking_message', 'คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'swal-error');
+            }
+            
+            header('location: ' . URLROOT . '/mybooking');
+            exit();
+        }
+        
+        // ถ้าเข้าถึงหน้านี้โดยตรง (ไม่ใช่ POST) ให้กลับไปหน้ารายการ
+        header('location: ' . URLROOT . '/mybooking');
+    }
 }

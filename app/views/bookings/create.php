@@ -114,4 +114,25 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ดึงค่าจำนวนวันที่ต้องจองล่วงหน้าจาก setting
+        const advanceDays = <?php echo setting('booking_advance_days', 1); ?>;
+        
+        // สร้าง object วันที่ปัจจุบัน
+        const today = new Date();
+        
+        // เพิ่มจำนวนวันที่ต้องจองล่วงหน้า
+        today.setDate(today.getDate() + advanceDays);
+        
+        // แปลงเป็นรูปแบบ YYYY-MM-DD
+        const minDate = today.toISOString().split('T')[0];
+        
+        // ตั้งค่า 'min' ให้กับ date inputs
+        document.getElementsByName('start_date')[0].setAttribute('min', minDate);
+        document.getElementsByName('end_date')[0].setAttribute('min', minDate);
+    });
+</script>
+
+
 <?php require APPROOT . '/views/inc/footer.php'; ?>

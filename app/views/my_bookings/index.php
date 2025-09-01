@@ -10,6 +10,8 @@
                     <a href="<?php echo URLROOT; ?>/booking/create" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">จองห้องประชุม</a>
                 </div>
 
+                <?php flash('mybooking_message'); ?>
+
                 <div class="bg-white shadow-md rounded-lg overflow-hidden">
                     <table class="min-w-full leading-normal">
                         <thead>
@@ -18,12 +20,13 @@
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ห้อง</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">เวลาเริ่ม</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">สถานะ</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if(empty($data['bookings'])): ?>
                                 <tr>
-                                    <td colspan="4" class="text-center py-10 text-gray-500">
+                                    <td colspan="5" class="text-center py-10 text-gray-500">
                                         คุณยังไม่มีประวัติการจอง
                                     </td>
                                 </tr>
@@ -47,6 +50,13 @@
                                             <?php echo $status_text; ?>
                                         </span>
                                     </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <form id="delete-mybooking-<?php echo $booking->id; ?>" action="<?php echo URLROOT; ?>/mybooking/delete/<?php echo $booking->id; ?>" method="post">
+                                            <button type="button" onclick="confirmDeleteMyBooking(<?php echo $booking->id; ?>)" class="text-red-600 hover:text-red-900 text-sm font-semibold">
+                                                ยกเลิก
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -57,4 +67,24 @@
         </main>
     </div>
 </div>
+
+<script>
+function confirmDeleteMyBooking(id) {
+    Swal.fire({
+        title: 'ยืนยันการยกเลิก',
+        text: "คุณต้องการยกเลิกการจองนี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ใช่, ยกเลิกเลย!',
+        cancelButtonText: 'ปิด'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-mybooking-' + id).submit();
+        }
+    })
+}
+</script>
+
 <?php require APPROOT . '/views/inc/footer.php'; ?>

@@ -117,6 +117,15 @@ class BookingController extends Controller
             if(empty($data['room_id'])){ $data['room_id_err'] = 'กรุณาเลือกห้องประชุม'; }
             // ... add more validation as needed
 
+            // --- เพิ่มการตรวจสอบวันที่จองล่วงหน้า ---
+            $advanceDays = (int)setting('booking_advance_days', 1);
+            $minBookingDate = date('Y-m-d', strtotime("+$advanceDays days"));
+
+            if($data['start_date'] < $minBookingDate){
+                $data['room_id_err'] = 'ไม่สามารถจองได้! ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
+            }
+            // --- จบส่วนที่เพิ่ม ---
+
             // --- เพิ่มการตรวจสอบการจองซ้อน ---
             if(empty($data['room_id_err']) && !empty($data['start_date']) && !empty($data['start_time']) && !empty($data['end_date']) && !empty($data['end_time'])){
                 

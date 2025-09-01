@@ -192,4 +192,76 @@ class Booking {
         // ถ้าเป็น 0 แสดงว่าว่าง
         return $this->db->rowCount() === 0;
     }
+
+    public function updateBooking($data){
+        $this->db->beginTransaction();
+        try {
+            $this->db->query('
+                UPDATE bookings SET room_id = :room_id, subject = :subject, department = :department, 
+                phone = :phone, attendees = :attendees, start_time = :start_time, end_time = :end_time, note = :note, room_layout_image = :room_layout_image
+                WHERE id = :id
+            ');
+            $this->db->bind(':id', $data['id']);
+            $this->db->bind(':room_id', $data['room_id']);
+            $this->db->bind(':subject', $data['subject']);
+            $this->db->bind(':department', $data['department']);
+            $this->db->bind(':phone', $data['phone']);
+            $this->db->bind(':attendees', $data['attendees']);
+            $this->db->bind(':start_time', $data['start_time']);
+            $this->db->bind(':end_time', $data['end_time']);
+            $this->db->bind(':note', $data['note']);
+            $this->db->bind(':room_layout_image', $data['room_layout_image']);
+            $this->db->execute();
+            
+            // ลบอุปกรณ์เก่าทั้งหมดของการจองนี้
+            $this->db->query('DELETE FROM booking_equipments WHERE booking_id = :booking_id');
+            $this->db->bind(':booking_id', $data['id']);
+            $this->db->execute();
+
+            // เพิ่มอุปกรณ์ที่เลือกใหม่
+            if(!empty($data['equipments'])){
+                $this->db->query('INSERT INTO booking_equipments (booking_id, equipment_id) VALUES (:booking_id, :equipment_id)');
+                foreach($data['equipments'] as $equipmentId){
+                    $this->db->bind(':booking_id', $data['id']);
+                    $this->db->bind(':equipment_id', $equipmentId);
+                    $this->db->execute();
+                }
+            }
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            die('DB Error: ' . $e->getMessage()); // เปิดไว้ดีบัก
+            // return false;
+        }
+    }
+
+    public function deleteBooking($id){
+        $this->db->beginTransaction();
+        try {
+            // ลบจากตารางกลางก่อน
+            $this->db->query('DELETE FROM booking_equipments WHERE booking_id = :id');
+            $this->db->bind(':id', $id);
+            $this->db->execute();
+            
+            // แล้วค่อยลบจากตารางหลัก
+            $this->db->query('DELETE FROM bookings WHERE id = :id');
+            $this->db->bind(':id', $id);
+            $this->db->execute();
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+
+    public function getSelectedEquipments($booking_id){
+        $this->db->query('SELECT equipment_id FROM booking_equipments WHERE booking_id = :booking_id');
+        $this->db->bind(':booking_id', $booking_id);
+        $results = $this->db->resultSet();
+        // แปลง array of objects เป็น array of IDs
+        return array_map(function($row){ return $row->equipment_id; }, $results);
+    }
 }

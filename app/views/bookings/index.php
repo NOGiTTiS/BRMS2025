@@ -57,18 +57,26 @@
                                     </span>
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <?php if($booking->status == 'pending') : ?>
-                                        <div class="flex items-center space-x-2">
+                                    <div class="flex items-center space-x-3">
+                                        <!-- ปุ่ม Approve/Reject (จะแสดงเฉพาะ pending) -->
+                                        <?php if($booking->status == 'pending') : ?>
                                             <form action="<?php echo URLROOT; ?>/booking/approve/<?php echo $booking->id; ?>" method="post" class="inline-block">
-                                                <button type="submit" class="text-green-600 hover:text-green-900">อนุมัติ</button>
+                                                <button type="submit" class="text-green-600 hover:text-green-900 text-xs font-semibold">อนุมัติ</button>
                                             </form>
                                             <form action="<?php echo URLROOT; ?>/booking/reject/<?php echo $booking->id; ?>" method="post" class="inline-block">
-                                                <button type="submit" class="text-red-600 hover:text-red-900">ปฏิเสธ</button>
+                                                <button type="submit" class="text-yellow-600 hover:text-yellow-900 text-xs font-semibold">ปฏิเสธ</button>
                                             </form>
-                                        </div>
-                                    <?php else: ?>
-                                        -
-                                    <?php endif; ?>
+                                        <?php endif; ?>
+
+                                        <!-- ปุ่ม Edit/Delete (แสดงเสมอ) -->
+                                        <a href="<?php echo URLROOT; ?>/booking/edit/<?php echo $booking->id; ?>" class="text-blue-600 hover:text-blue-900 text-xs font-semibold">แก้ไข</a>
+                                        
+                                        <form id="delete-booking-form-<?php echo $booking->id; ?>" action="<?php echo URLROOT; ?>/booking/delete/<?php echo $booking->id; ?>" method="post" class="inline-block">
+                                            <button type="button" onclick="confirmDeleteBooking(<?php echo $booking->id; ?>)" class="text-red-600 hover:text-red-900 text-xs font-semibold">
+                                                ลบ
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -79,4 +87,25 @@
         </main>
     </div>
 </div>
+
+<script>
+function confirmDeleteBooking(id) {
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "คุณต้องการลบการจองนี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-booking-form-' + id).submit();
+        }
+    })
+}
+</script>
+
+<?php require APPROOT . '/views/inc/footer.php'; ?>
 <?php require APPROOT . '/views/inc/footer.php'; ?>

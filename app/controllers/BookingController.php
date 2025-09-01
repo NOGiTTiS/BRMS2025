@@ -217,4 +217,97 @@ class BookingController extends Controller
             header('location: ' . URLROOT . '/booking');
         }
     }
+
+    // หน้าแก้ไขการจอง (สำหรับ Admin)
+    public function edit($id){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // กรองข้อมูลด้วย htmlspecialchars
+            $sanitized_post = [];
+            foreach($_POST as $key => $value){
+                if (!is_array($value)) {
+                    $sanitized_post[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                } else {
+                    $sanitized_post[$key] = $value;
+                }
+            }
+            // จัดการข้อมูลไฟล์ (ถ้ามีการอัปโหลดใหม่)
+            $newImageName = null;
+            if (isset($_FILES['room_layout_image']) && $_FILES['room_layout_image']['error'] === UPLOAD_ERR_OK) {
+                $newImageName = FileHelper::upload($_FILES['room_layout_image']);
+            }
+
+            $data = [
+                'id' => $id,
+                'room_id' => trim($sanitized_post['room_id']),
+                'subject' => trim($sanitized_post['subject']),
+                'department' => trim($sanitized_post['department']),
+                'phone' => trim($sanitized_post['phone']),
+                'attendees' => trim($sanitized_post['attendees']),
+                'start_time' => trim($sanitized_post['start_date']) . ' ' . trim($sanitized_post['start_time']),
+                'end_time' => trim($sanitized_post['end_date']) . ' ' . trim($sanitized_post['end_time']),
+                'note' => trim($sanitized_post['note']),
+                'equipments' => isset($sanitized_post['equipments']) ? $sanitized_post['equipments'] : [],
+                'room_layout_image' => $newImageName, // ชื่อไฟล์ใหม่ หรือ null
+                'existing_layout_image' => trim($sanitized_post['existing_layout_image']), // ชื่อไฟล์เดิม
+            ];
+            
+            // ถ้าไม่มีการอัปโหลดไฟล์ใหม่ ให้ใช้ไฟล์เดิม
+            if(is_null($data['room_layout_image'])){
+                $data['room_layout_image'] = $data['existing_layout_image'];
+            }
+
+            // Validation (ควรเพิ่มให้ครบถ้วน)
+            if(empty($data['subject'])){
+                // ควรจะ redirect กลับไปพร้อม error message
+                die('Subject is required.');
+            }
+
+            if($this->bookingModel->updateBooking($data)){
+                flash('booking_manage_message', 'อัปเดตการจองสำเร็จ', 'swal-success');
+                header('location: ' . URLROOT . '/booking/show/' . $id);
+            } else {
+                die('Something went wrong during update');
+            }
+
+        } else {
+            $booking = $this->bookingModel->getBookingById($id);
+            // ดึง ID ของอุปกรณ์ที่ถูกเลือกไว้แล้ว
+            $selectedEquipments = $this->bookingModel->getSelectedEquipments($id);
+
+            $data = [
+                'title' => 'แก้ไขการจอง',
+                'active_menu' => 'manage_bookings',
+                'booking' => $booking,
+                'rooms' => $this->roomModel->getRooms(),
+                'all_equipments' => $this->equipmentModel->getEquipments(),
+                'selected_equipments' => $selectedEquipments
+            ];
+            $this->view('bookings/edit', $data);
+        }
+    }
+
+    // ลบการจอง (สำหรับ Admin)
+    public function delete($id){
+        if(!isLoggedIn() || $_SESSION['user_role'] !== 'admin'){
+            header('location: ' . URLROOT . '/dashboard');
+            exit();
+        }
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // ควรมีการตรวจสอบเพิ่มเติมว่าการจองนี้มีอยู่จริงหรือไม่
+            if($this->bookingModel->deleteBooking($id)){
+                flash('booking_manage_message', 'ลบการจองสำเร็จ', 'swal-success');
+                header('location: ' . URLROOT . '/booking');
+            } else {
+                die('Something went wrong during deletion');
+            }
+        } else {
+            header('location: ' . URLROOT . '/booking');
+        }
+    }
 }

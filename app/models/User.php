@@ -77,7 +77,7 @@ class User {
 
     // ดึงข้อมูลผู้ใช้ทั้งหมด
     public function getUsers(){
-        $this->db->query('SELECT id, username, first_name, last_name, email, role, created_at FROM users ORDER BY created_at DESC');
+        $this->db->query('SELECT id, username, first_name, last_name, email, role, created_at FROM users ORDER BY id ASC');
         return $this->db->resultSet();
     }
 

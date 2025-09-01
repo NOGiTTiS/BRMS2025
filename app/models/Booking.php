@@ -80,7 +80,8 @@ class Booking {
             }
             
             $this->db->commit();
-            return true;
+            //return true;
+            return $bookingId; 
 
         } catch (Exception $e) {
             $this->db->rollBack();

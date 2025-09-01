@@ -14,6 +14,12 @@
                             <label for="site_name" class="block text-gray-700 font-semibold">ชื่อระบบ</label>
                             <input type="text" name="site_name" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['site_name'] ?? ''); ?>">
                         </div>
+                        <!-- เพิ่มส่วนนี้เข้ามา -->
+                        <div class="mb-4">
+                            <label for="public_url" class="block text-gray-700 font-semibold">Public URL</label>
+                            <input type="text" name="public_url" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['public_url'] ?? URLROOT); ?>">
+                            <p class="text-xs text-gray-500 mt-1">URL ที่สามารถเข้าถึงได้จากภายนอก สำหรับใช้ในลิงก์แจ้งเตือน (เช่น http://yourdomain.com หรือ http://123.123.123.123/brms/public)</p>
+                        </div>
                         <!-- Copyright -->
                         <div class="mb-6">
                             <label for="copyright_text" class="block text-gray-700 font-semibold">ข้อความ Copyright</label>
@@ -58,7 +64,27 @@
                             <p class="text-xs text-gray-500 mt-1">เช่น ใส่ 1 คือต้องจองล่วงหน้า 1 วัน (จองวันนี้เพื่อใช้พรุ่งนี้), ใส่ 0 คือสามารถจองวันปัจจุบันได้</p>
                         </div>
 
-                        <button type="submit" class="bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-600 transition">บันทึกการตั้งค่า</button>
+                        <!-- เพิ่มส่วนนี้เข้ามา -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-semibold text-gray-700">ตั้งค่าการแจ้งเตือน Telegram</h3>
+                            <div class="mb-4">
+                                <label for="telegram_enabled" class="block text-gray-700 font-semibold">สถานะ</label>
+                                <select name="telegram_enabled" class="w-full mt-1 px-3 py-2 border rounded">
+                                    <option value="1" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '1') ? 'selected' : ''; ?>>เปิดใช้งาน</option>
+                                    <option value="0" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '0') ? 'selected' : ''; ?>>ปิดใช้งาน</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="telegram_token" class="block text-gray-700 font-semibold">Bot API Token</label>
+                                <input type="text" name="telegram_token" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_token'] ?? ''); ?>">
+                            </div>
+                            <div class="mb-6">
+                                <label for="telegram_chat_id" class="block text-gray-700 font-semibold">Chat ID (ของกลุ่มหรือผู้ใช้)</label>
+                                <input type="text" name="telegram_chat_id" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_chat_id'] ?? ''); ?>">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="bg-pink-500 text-white font-bold py-2 px-6 my-4 rounded-lg hover:bg-pink-600 transition">บันทึกการตั้งค่า</button>
                     </form>
                 </div>
             </div>

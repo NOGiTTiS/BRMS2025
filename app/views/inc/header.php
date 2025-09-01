@@ -22,5 +22,26 @@
     <style>
         body { font-family: 'Prompt', sans-serif; }
     </style>
+
+    <!-- START: Flash Message Handler -->
+    <?php if(isset($_SESSION['notification'])): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: '<?php echo $_SESSION['notification_type']; ?>',
+                    title: '<?php echo $_SESSION['notification']; ?>',
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#a855f7'
+                });
+            });
+        </script>
+        <?php
+            // ล้าง session หลังจากเตรียมสคริปต์แล้ว
+            unset($_SESSION['notification']);
+            unset($_SESSION['notification_type']);
+        ?>
+    <?php endif; ?>
+    <!-- END: Flash Message Handler -->
+
 </head>
 <body class="h-full">

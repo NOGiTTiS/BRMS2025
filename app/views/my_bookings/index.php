@@ -10,8 +10,6 @@
                     <a href="<?php echo URLROOT; ?>/booking/create" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">จองห้องประชุม</a>
                 </div>
 
-                <?php flash('mybooking_message'); ?>
-
                 <div class="bg-white shadow-md rounded-lg overflow-hidden">
                     <table class="min-w-full leading-normal">
                         <thead>

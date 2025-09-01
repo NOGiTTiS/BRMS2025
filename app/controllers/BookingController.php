@@ -158,16 +158,40 @@ class BookingController extends Controller
                     'room_layout_image' => $uploadedFileName
                 ];
 
+                
                 // 7. ส่งแค่ข้อมูลที่จำเป็นไปให้ Model
-                if($this->bookingModel->createBooking($bookingDataToSave)){
-                    flash('booking_message', 'ส่งคำขอจองห้องประชุมสำเร็จแล้ว กรุณารอการอนุมัติ', 'swal-success');
-                    header('location: ' . URLROOT);
+                // เปลี่ยนการเรียกใช้ Model
+                $newBookingId = $this->bookingModel->createBooking($bookingDataToSave);
+
+                if($newBookingId){
+                    // --- ส่งแจ้งเตือน Telegram ---
+                    $room = $this->roomModel->getRoomById($bookingDataToSave['room_id']);
+                    $room_name = $room ? $room->name : 'N/A';
+                    
+                    // สร้างข้อความโดยใช้ Tag HTML ของ Telegram
+                    $message  = "🔔 <b>มีการจองใหม่</b> 🔔\n\n";
+                    $message .= "<b>หัวข้อ:</b> " . htmlspecialchars($bookingDataToSave['subject']) . "\n";
+                    $message .= "<b>ห้อง:</b> " . htmlspecialchars($room_name) . "\n";
+                    $message .= "<b>เวลา:</b> " . date('d/m/Y H:i', strtotime($bookingDataToSave['start_time'])) . "\n";
+                    $message .= "<b>โดย:</b> " . htmlspecialchars($_SESSION['user_name']) . "\n\n";
+                    // ดึง Public URL จาก Setting
+                    $publicUrl = setting('public_url', URLROOT); // ใช้ URLROOT เป็นค่าสำรอง
+                    $detailsLink = $publicUrl . "/booking/show/" . $newBookingId;
+
+                    $message .= "<a href='" . $detailsLink . "'>คลิกเพื่อดูรายละเอียดและอนุมัติ</a>";
+                    
+                    // ส่งแจ้งเตือน
+                    NotificationHelper::sendTelegram($message);
+
+                    // ใช้ชื่อกลางๆ และส่ง type เป็น success
+                    flash('notification', 'ส่งคำขอจองห้องประชุมสำเร็จแล้ว', 'success');
+                    
+                    header('location: ' . URLROOT . '/mybooking');
                     exit();
                 } else {
                     die('Something went wrong');
                 }
             } else {
-                // ถ้ามี error, โหลด View กลับไปพร้อมข้อมูลทั้งหมด
                 $this->view('bookings/create', $data);
             }
         } else {

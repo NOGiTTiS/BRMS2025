@@ -87,6 +87,13 @@
                             <input type="number" name="booking_advance_days" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['booking_advance_days'] ?? '1'); ?>">
                             <p class="text-xs text-gray-500 mt-1">ใส่ 0 คือสามารถจองวันปัจจุบันได้</p>
                         </div>
+                        <div>
+                            <label for="allow_weekend_booking" class="block text-gray-700 font-semibold">การจองในวันหยุด (เสาร์-อาทิตย์)</label>
+                            <select name="allow_weekend_booking" class="w-full mt-1 px-3 py-2 border rounded">
+                                <option value="0" <?php echo (($data['settings']['allow_weekend_booking'] ?? '0') == '0') ? 'selected' : ''; ?>>ไม่อนุญาต</option>
+                                <option value="1" <?php echo (($data['settings']['allow_weekend_booking'] ?? '0') == '1') ? 'selected' : ''; ?>>อนุญาต</option>
+                            </select>
+                        </div>
                     </div>
 
                     <hr class="my-8">

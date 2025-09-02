@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 02, 2025 at 03:33 AM
+-- Generation Time: Sep 02, 2025 at 06:35 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -211,8 +211,8 @@ INSERT INTO `bookings` (`id`, `user_id`, `room_id`, `subject`, `department`, `ph
 (187, 11, 2, 'อบรมครูก่อการดี', 'วิชาการ', '0817272552', 70, '2025-08-31 08:00:00', '2025-08-31 16:00:00', '1. จัดเก้าอี้ เป็นวงรี 70 ตัว (ช่วงเช้า)\r\n2. ถังต้มน้ำร้อน\r\n3. โต๊ะหน้าขาว 35 ตัว (ใช้ช่วงบ่าย)\r\n4. ปลั๊กพ่วงสำหรับต่อคอมพิวเตอร์', NULL, 'approved', NULL, '2025-08-27 19:10:53', '2025-08-27 19:10:53'),
 (190, 87, 7, 'ทดสอบจอง01', 'ทดสอบจอง01', '2222111222', 2, '2025-09-01 19:50:00', '2025-09-01 22:50:00', 'ทดสอบจอง011', '68b445194df280.25636077.png', 'approved', 1, '2025-08-31 12:50:33', '2025-09-01 02:33:03'),
 (195, 87, 7, 'ทดสอบจองล่วงหน้า1', 'ทดสอบจองล่วงหน้า1', '0801112233', 3, '2025-08-31 13:44:00', '2025-08-31 17:44:00', '', NULL, 'approved', NULL, '2025-09-01 04:44:51', '2025-09-01 04:44:51'),
-(202, 1, 7, 'ทดสอบ Telegram Bot', 'ทดสอบ Telegram Bot', '0801112233', 2, '2025-09-06 19:07:00', '2025-09-06 20:07:00', '-4765744081', '68b54637387cf1.37149011.png', 'approved', NULL, '2025-09-01 07:07:35', '2025-09-01 07:07:35'),
-(204, 87, 7, 'ทดสอบ Telegram Bot', 'ทดสอบ Telegram Bot', '0801112233', 2, '2025-09-30 15:28:00', '2025-09-30 17:28:00', 'ทดสอบ Telegram Bot', '68b54b1f8697c8.48233144.png', 'approved', NULL, '2025-09-01 07:28:31', '2025-09-01 07:28:31');
+(204, 87, 7, 'ทดสอบ Telegram Bot', 'ทดสอบ Telegram Bot', '0801112233', 2, '2025-09-30 15:28:00', '2025-09-30 17:28:00', 'ทดสอบ Telegram Bot', '68b54b1f8697c8.48233144.png', 'approved', NULL, '2025-09-01 07:28:31', '2025-09-01 07:28:31'),
+(205, 87, 6, 'ทดสอบงดจองวันหยุด', 'ทดสอบงดจองวันหยุด', '0801112233', 2, '2025-10-07 13:34:00', '2025-10-07 16:34:00', 'ทดสอบงดจองวันหยุด', '68b6902536feb1.91513744.png', 'approved', NULL, '2025-09-02 06:35:17', '2025-09-02 06:35:17');
 
 -- --------------------------------------------------------
 
@@ -748,10 +748,10 @@ INSERT INTO `booking_equipments` (`id`, `booking_id`, `equipment_id`) VALUES
 (681, 190, 3),
 (698, 195, 1),
 (699, 195, 5),
-(711, 202, 1),
-(712, 202, 5),
-(716, 204, 1),
-(717, 204, 5);
+(718, 204, 1),
+(719, 204, 5),
+(720, 205, 1),
+(721, 205, 5);
 
 -- --------------------------------------------------------
 
@@ -825,6 +825,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`setting_name`, `setting_value`) VALUES
+('allow_weekend_booking', '0'),
 ('copyright_text', '© {year} BRMS Project. All rights reserved.'),
 ('default_booking_status', 'approved'),
 ('min_advance_booking_days', '1'),
@@ -966,13 +967,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=205;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
 
 --
 -- AUTO_INCREMENT for table `booking_equipments`
 --
 ALTER TABLE `booking_equipments`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=718;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=722;
 
 --
 -- AUTO_INCREMENT for table `equipments`

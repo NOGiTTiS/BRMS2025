@@ -115,18 +115,29 @@ class BookingController extends Controller
             ];
 
             // 4. Validation
+            $data['subject_err'] = '';
+            $data['room_id_err'] = '';
+            $data['date_err'] = '';
+
             if(empty($data['subject'])){ $data['subject_err'] = 'กรุณากรอกหัวข้อการประชุม'; }
             if(empty($data['room_id'])){ $data['room_id_err'] = 'กรุณาเลือกห้องประชุม'; }
-            // ... add more validation as needed
 
-            // --- เพิ่มการตรวจสอบวันที่จองล่วงหน้า ---
-            if($_SESSION['user_role'] !== 'admin'){
+            // --- เริ่มการตรวจสอบวันที่ (สำหรับ User เท่านั้น) ---
+            if($_SESSION['user_role'] === 'user'){
+                // ตรวจสอบการจองล่วงหน้า
                 $advanceDays = (int)setting('booking_advance_days', 1);
                 $minBookingDate = date('Y-m-d', strtotime("+$advanceDays days"));
-
                 if($data['start_date'] < $minBookingDate){
-                    // เปลี่ยนจาก room_id_err เป็น date_err เพื่อไม่ให้ไปทับซ้อนกับ error การจองซ้อน
-                    $data['date_err'] = 'ไม่สามารถจองได้! ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
+                    $data['date_err'] = 'ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
+                }
+
+                // ตรวจสอบการจองวันหยุด
+                $allowWeekend = setting('allow_weekend_booking', '0');
+                if($allowWeekend === '0' && empty($data['date_err'])){ // ตรวจสอบต่อเมื่อยังไม่เจอ error แรก
+                    $dayOfWeek = date('w', strtotime($data['start_date'])); // 0=Sun, 6=Sat
+                    if($dayOfWeek == 0 || $dayOfWeek == 6){
+                        $data['date_err'] = 'ไม่สามารถจองในวันเสาร์-อาทิตย์ได้';
+                    }
                 }
             }
             // --- จบส่วนที่เพิ่ม ---

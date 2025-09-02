@@ -130,22 +130,48 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- ส่วนที่เพิ่มเข้ามา ---
-        // ตรวจสอบ Role ของผู้ใช้ที่ส่งมาจาก PHP
+        // ตรวจสอบ Role ของผู้ใช้ก่อน
         const userRole = '<?php echo $_SESSION['user_role']; ?>';
 
-        // ถ้าผู้ใช้ไม่ใช่ admin, ให้ทำการล็อกปฏิทิน
-        if (userRole !== 'admin') {
+        // กฎทั้งหมดนี้จะทำงานเฉพาะเมื่อผู้ใช้เป็น 'user' เท่านั้น
+        if (userRole === 'user') {
+            const startDateInput = document.getElementsByName('start_date')[0];
+            const endDateInput = document.getElementsByName('end_date')[0];
+
+            // --- กฎข้อที่ 1: การจองล่วงหน้า ---
             const advanceDays = <?php echo setting('booking_advance_days', 1); ?>;
             const today = new Date();
+            today.setHours(0,0,0,0); // ตั้งเวลาเป็นเที่ยงคืนเพื่อความแม่นยำ
             today.setDate(today.getDate() + advanceDays);
             const minDate = today.toISOString().split('T')[0];
             
-            document.getElementsByName('start_date')[0].setAttribute('min', minDate);
-            document.getElementsByName('end_date')[0].setAttribute('min', minDate);
+            startDateInput.setAttribute('min', minDate);
+            endDateInput.setAttribute('min', minDate);
+
+            // --- กฎข้อที่ 2: การจองวันหยุด ---
+            const allowWeekend = '<?php echo setting('allow_weekend_booking', '0'); ?>';
+
+            function checkDateRestrictions(event) {
+                // ทำงานต่อเมื่อ "ไม่อนุญาต" ให้จองวันหยุด
+                if (allowWeekend === '0') {
+                    const selectedDate = new Date(event.target.value);
+                    const day = selectedDate.getUTCDay(); 
+
+                    if (day === 0 || day === 6) { // 0=Sun, 6=Sat
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่สามารถเลือกวันหยุดได้',
+                            text: 'ระบบไม่อนุญาตให้ทำการจองในวันเสาร์-อาทิตย์',
+                        });
+                        event.target.value = ''; // ล้างค่า
+                    }
+                }
+            }
+
+            startDateInput.addEventListener('change', checkDateRestrictions);
+            endDateInput.addEventListener('change', checkDateRestrictions);
         }
-        // ถ้าเป็น admin, โค้ดส่วนนี้จะถูกข้ามไปทั้งหมด ทำให้ไม่มีการตั้งค่า 'min'
-        // --- จบส่วนที่เพิ่ม ---
+        // ถ้าเป็น 'admin', โค้ดใน if นี้ทั้งหมดจะถูกข้ามไป
     });
 </script>
 

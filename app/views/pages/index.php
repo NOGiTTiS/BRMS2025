@@ -3,7 +3,19 @@
 <!-- div หลักของ Layout -->
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
-    <!-- Sidebar & Overlay -->
+    <!-- Overlay for mobile -->
+    <div x-show="sidebarOpen" 
+         @click="sidebarOpen = false" 
+         class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-50"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-50"
+         x-transition:leave-end="opacity-0">
+    </div>
+    
+    <!-- Sidebar -->
     <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
     <!-- START: Main Content Area -->
@@ -13,20 +25,13 @@
         <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
         <!-- START: Page Content Wrapper -->
-        <!-- ส่วนนี้จะมี Scrollbar แนวตั้งถ้าเนื้อหายาว -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
             
-            <!-- Wrapper สำหรับจัดการเนื้อหาที่อาจจะกว้างเกินไป (เช่น ปฏิทิน) -->
-            <div class="overflow-x-auto">
-                
-                <?php flash('booking_message'); ?>
+            <?php flash('booking_message'); ?>
 
-                <!-- Glassmorphism Card -->
-                <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
-                    <!-- Calendar Container -->
-                    <!-- กำหนดความกว้างขั้นต่ำเพื่อให้ปฏิทินไม่ถูกบีบจนเสียรูปบนจอมือถือ -->
-                    <div id="calendar-container" class="h-full min-w-[700px]"></div>
-                </div>
+            <!-- Wrapper สำหรับจัดการเนื้อหาที่กว้าง (ปฏิทิน) -->
+            <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full overflow-x-auto">
+                <div id="calendar-container" class="h-full min-w-[700px]"></div>
             </div>
 
         </main>

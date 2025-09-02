@@ -1,18 +1,28 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
-
-<!-- div หลักของ Layout -->
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
-    <!-- Sidebar & Overlay -->
+    <!-- Overlay for mobile -->
+    <div x-show="sidebarOpen" 
+         @click="sidebarOpen = false" 
+         class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-50"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-50"
+         x-transition:leave-end="opacity-0">
+    </div>
+
+    <!-- Sidebar -->
     <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
-    <!-- START: Main Content Area -->
+    <!-- Main Content Area -->
     <div class="flex flex-col flex-1 md:w-0">
 
         <!-- Top Navigation -->
         <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
-        <!-- START: Page Content Wrapper -->
+        <!-- Page Content Wrapper -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
             
             <a href="<?php echo URLROOT; ?>/room" class="text-gray-500 hover:text-gray-700 mb-4 inline-block">&larr; กลับไปหน้ารายการ</a>
@@ -52,11 +62,6 @@
             </div>
             
         </main>
-        <!-- END: Page Content Wrapper -->
-
     </div>
-    <!-- END: Main Content Area -->
-
 </div>
-
 <?php require APPROOT . '/views/inc/footer.php'; ?>

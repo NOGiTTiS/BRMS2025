@@ -1,49 +1,43 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 
-<div class="bg-pink-50">
-    <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
+<!-- div หลักของ Layout -->
+<div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
-        <!-- START: Overlay for mobile -->
-        <div x-show="sidebarOpen" 
-             @click="sidebarOpen = false" 
-             class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-50"
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-50"
-             x-transition:leave-end="opacity-0">
-        </div>
-        <!-- END: Overlay for mobile -->
+    <!-- Sidebar & Overlay -->
+    <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
-        <!-- เรียกใช้ Sidebar -->
-        <?php include APPROOT . '/views/inc/sidebar.php'; ?>
+    <!-- START: Main Content Area -->
+    <div class="flex flex-col flex-1 md:w-0">
 
-        <!-- START: Main Content Area -->
-        <div class="flex-1 flex flex-col w-0">
+        <!-- Top Navigation -->
+        <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
-            <!-- เรียกใช้ Top Navigation -->
-            <?php include APPROOT . '/views/inc/topnav.php'; ?>
-
-            <!-- START: Page Content -->
-            <main class="flex-1 p-4 md:p-8">
+        <!-- START: Page Content Wrapper -->
+        <!-- ส่วนนี้จะมี Scrollbar แนวตั้งถ้าเนื้อหายาว -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            
+            <!-- Wrapper สำหรับจัดการเนื้อหาที่อาจจะกว้างเกินไป (เช่น ปฏิทิน) -->
+            <div class="overflow-x-auto">
+                
                 <?php flash('booking_message'); ?>
-                <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
-                    <div id="calendar-container" class="h-full min-w-[700px]">
-                </div>
-            </main>
-            <!-- END: Page Content -->
 
-        </div>
-        <!-- END: Main Content Area -->
+                <!-- Glassmorphism Card -->
+                <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
+                    <!-- Calendar Container -->
+                    <!-- กำหนดความกว้างขั้นต่ำเพื่อให้ปฏิทินไม่ถูกบีบจนเสียรูปบนจอมือถือ -->
+                    <div id="calendar-container" class="h-full min-w-[700px]"></div>
+                </div>
+            </div>
+
+        </main>
+        <!-- END: Page Content Wrapper -->
 
     </div>
+    <!-- END: Main Content Area -->
+
 </div>
 
-<!-- Alpine.js for simple interactivity -->
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-
-<!-- FullCalendar script from previous steps -->
+<!-- FullCalendar script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar-container');
@@ -113,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>เวลาเริ่ม:</strong> ${startTime}</p>
                         <p><strong>เวลาสิ้นสุด:</strong> ${endTime}</p>
                         <hr class="my-2">
-                        <p><strong>อุปกรณ์ที่จอง:</strong> ${props.equipments_list || '-'}</p>
+                        <p><strong>อุปกรณ์ที่ต้องการ:</strong> ${props.equipments_list || '-'}</p>
                         <p><strong>หมายเหตุ:</strong> ${props.note || '-'}</p>
                         <p><strong>รูปแบบการจัดห้อง:</strong> ${layoutImageHtml}</p>
                         <hr class="my-2">

@@ -1,94 +1,120 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
+
+<!-- div หลักของ Layout -->
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
+
+    <!-- Sidebar & Overlay -->
     <?php include APPROOT . '/views/inc/sidebar.php'; ?>
-    <div class="flex-1 flex flex-col w-0">
+
+    <!-- START: Main Content Area -->
+    <div class="flex flex-col flex-1 md:w-0">
+
+        <!-- Top Navigation -->
         <?php include APPROOT . '/views/inc/topnav.php'; ?>
-        <main class="flex-1 p-4 md:p-8">
-            <div class="overflow-x-auto">
-                <h1 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h1>
-                <?php flash('setting_message'); ?>
-                <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
-                    <form action="<?php echo URLROOT; ?>/setting" method="post" enctype="multipart/form-data">
-                        <!-- Site Name -->
-                        <div class="mb-4">
+
+        <!-- START: Page Content Wrapper -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            
+            <h1 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h1>
+
+            <?php flash('setting_message'); ?>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+                <form action="<?php echo URLROOT; ?>/setting" method="post" enctype="multipart/form-data">
+                    <!-- General Settings -->
+                    <div class="space-y-6">
+                        <div>
                             <label for="site_name" class="block text-gray-700 font-semibold">ชื่อระบบ</label>
                             <input type="text" name="site_name" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['site_name'] ?? ''); ?>">
                         </div>
-                        <!-- เพิ่มส่วนนี้เข้ามา -->
-                        <div class="mb-4">
+                        <div>
                             <label for="public_url" class="block text-gray-700 font-semibold">Public URL</label>
                             <input type="text" name="public_url" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['public_url'] ?? URLROOT); ?>">
-                            <p class="text-xs text-gray-500 mt-1">URL ที่สามารถเข้าถึงได้จากภายนอก สำหรับใช้ในลิงก์แจ้งเตือน (เช่น http://yourdomain.com หรือ http://123.123.123.123/brms/public)</p>
+                            <p class="text-xs text-gray-500 mt-1">URL ที่สามารถเข้าถึงได้จากภายนอก สำหรับใช้ในลิงก์แจ้งเตือน</p>
                         </div>
-                        <!-- Copyright -->
-                        <div class="mb-6">
+                        <div>
                             <label for="copyright_text" class="block text-gray-700 font-semibold">ข้อความ Copyright</label>
                             <input type="text" name="copyright_text" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['copyright_text'] ?? ''); ?>">
                             <p class="text-xs text-gray-500 mt-1">ใช้ `{year}` เพื่อแสดงปีปัจจุบันโดยอัตโนมัติ</p>
                         </div>
-                        <hr class="my-6">
-                        <!-- Logo Upload -->
-                        <div class="mb-4">
+                    </div>
+
+                    <hr class="my-8">
+
+                    <!-- File Uploads & Color -->
+                    <div class="space-y-6">
+                        <div>
                             <label class="block text-gray-700 font-semibold">โลโก้ระบบ</label>
                             <?php if(!empty($data['settings']['site_logo'])): ?>
                                 <img src="<?php echo URLROOT; ?>/uploads/logos/<?php echo $data['settings']['site_logo']; ?>" alt="Current Logo" class="h-12 my-2">
                             <?php endif; ?>
                             <input type="file" name="site_logo" class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
                         </div>
-                        <!-- Favicon Upload -->
-                        <div class="mb-6">
+                        <div>
                             <label class="block text-gray-700 font-semibold">Favicon</label>
                             <?php if(!empty($data['settings']['site_favicon'])): ?>
                                 <img src="<?php echo URLROOT; ?>/uploads/favicons/<?php echo $data['settings']['site_favicon']; ?>" alt="Current Favicon" class="h-8 w-8 my-2">
                             <?php endif; ?>
                             <input type="file" name="site_favicon" class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
                         </div>
-                         <!-- Sidebar Color -->
-                        <div class="mb-6">
+                        <div>
                             <label for="sidebar_color" class="block text-gray-700 font-semibold">สี Sidebar</label>
-                            <input type="color" name="sidebar_color" class="w-20 h-10 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['settings']['sidebar_color'] ?? '#DB2777'); ?>">
+                            <input type="color" name="sidebar_color" class="w-20 h-10 mt-1 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['settings']['sidebar_color'] ?? '#DB2777'); ?>">
                         </div>
-                        <hr class="my-6">
-                        <!-- Default Booking Status -->
-                        <div class="mb-6">
+                    </div>
+                    
+                    <hr class="my-8">
+
+                    <!-- Booking Settings -->
+                    <div class="space-y-6">
+                         <div>
                             <label for="default_booking_status" class="block text-gray-700 font-semibold">สถานะเริ่มต้นของการจอง</label>
                             <select name="default_booking_status" class="w-full mt-1 px-3 py-2 border rounded">
                                 <option value="pending" <?php echo (($data['settings']['default_booking_status'] ?? 'pending') == 'pending') ? 'selected' : ''; ?>>รออนุมัติ (Pending)</option>
                                 <option value="approved" <?php echo (($data['settings']['default_booking_status'] ?? 'pending') == 'approved') ? 'selected' : ''; ?>>อนุมัติอัตโนมัติ (Approved)</option>
                             </select>
                         </div>
-                        <!-- Booking Advance Days -->
-                        <div class="mb-6">
+                        <div>
                             <label for="booking_advance_days" class="block text-gray-700 font-semibold">ต้องจองล่วงหน้าอย่างน้อย (วัน)</label>
                             <input type="number" name="booking_advance_days" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['booking_advance_days'] ?? '1'); ?>">
-                            <p class="text-xs text-gray-500 mt-1">เช่น ใส่ 1 คือต้องจองล่วงหน้า 1 วัน (จองวันนี้เพื่อใช้พรุ่งนี้), ใส่ 0 คือสามารถจองวันปัจจุบันได้</p>
+                            <p class="text-xs text-gray-500 mt-1">ใส่ 0 คือสามารถจองวันปัจจุบันได้</p>
                         </div>
+                    </div>
 
-                        <!-- เพิ่มส่วนนี้เข้ามา -->
-                        <div class="space-y-4">
-                            <h3 class="text-xl font-semibold text-gray-700">ตั้งค่าการแจ้งเตือน Telegram</h3>
-                            <div class="mb-4">
-                                <label for="telegram_enabled" class="block text-gray-700 font-semibold">สถานะ</label>
-                                <select name="telegram_enabled" class="w-full mt-1 px-3 py-2 border rounded">
-                                    <option value="1" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '1') ? 'selected' : ''; ?>>เปิดใช้งาน</option>
-                                    <option value="0" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '0') ? 'selected' : ''; ?>>ปิดใช้งาน</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="telegram_token" class="block text-gray-700 font-semibold">Bot API Token</label>
-                                <input type="text" name="telegram_token" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_token'] ?? ''); ?>">
-                            </div>
-                            <div class="mb-6">
-                                <label for="telegram_chat_id" class="block text-gray-700 font-semibold">Chat ID (ของกลุ่มหรือผู้ใช้)</label>
-                                <input type="text" name="telegram_chat_id" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_chat_id'] ?? ''); ?>">
-                            </div>
+                    <hr class="my-8">
+
+                    <!-- Telegram Settings -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-semibold text-gray-700">ตั้งค่าการแจ้งเตือน Telegram</h3>
+                        <div>
+                            <label for="telegram_enabled" class="block text-gray-700 font-semibold">สถานะ</label>
+                            <select name="telegram_enabled" class="w-full mt-1 px-3 py-2 border rounded">
+                                <option value="1" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '1') ? 'selected' : ''; ?>>เปิดใช้งาน</option>
+                                <option value="0" <?php echo (($data['settings']['telegram_enabled'] ?? '0') == '0') ? 'selected' : ''; ?>>ปิดใช้งาน</option>
+                            </select>
                         </div>
-
-                        <button type="submit" class="bg-pink-500 text-white font-bold py-2 px-6 my-4 rounded-lg hover:bg-pink-600 transition">บันทึกการตั้งค่า</button>
-                    </form>
-                </div>
+                        <div>
+                            <label for="telegram_token" class="block text-gray-700 font-semibold">Bot API Token</label>
+                            <input type="text" name="telegram_token" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_token'] ?? ''); ?>">
+                        </div>
+                        <div>
+                            <label for="telegram_chat_id" class="block text-gray-700 font-semibold">Chat ID</label>
+                            <input type="text" name="telegram_chat_id" class="w-full mt-1 px-3 py-2 border rounded" value="<?php echo htmlspecialchars($data['settings']['telegram_chat_id'] ?? ''); ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <button type="submit" class="w-full sm:w-auto bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-600 transition">บันทึกการตั้งค่า</button>
+                    </div>
+                </form>
             </div>
+            
         </main>
+        <!-- END: Page Content Wrapper -->
+
     </div>
+    <!-- END: Main Content Area -->
+
 </div>
+
 <?php require APPROOT . '/views/inc/footer.php'; ?>

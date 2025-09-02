@@ -111,6 +111,10 @@
                         <label for="note" class="block text-gray-700 font-semibold">หมายเหตุ</label>
                         <textarea name="note" rows="3" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded"><?php echo htmlspecialchars($data['note']); ?></textarea>
                     </div>
+
+                    <div class="mb-6">
+                        <label for="note" class="block text-red-700 font-semibold">** หากเป็นการจองในช่วงวันหยุด กรุณาประสานเจ้าหน้าที่ ที่สามารถมาปฏิบัติงานได้ ด้วยตนเอง **</label>
+                    </div>
                     
                     <div class="mt-8">
                         <button type="submit" class="w-full sm:w-auto bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-600 transition">ส่งคำขอจอง</button>

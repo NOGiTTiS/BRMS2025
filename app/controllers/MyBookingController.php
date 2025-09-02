@@ -22,6 +22,13 @@ class MyBookingController extends Controller {
             'active_menu' => 'my_bookings',
             'bookings' => $bookings
         ];
+
+        // --- เพิ่มโค้ดดีบักตรงนี้ ---
+        // echo '<pre>';
+        // print_r($data['bookings']);
+        // echo '</pre>';
+        // die();
+        // --- จบส่วนดีบัก ---
         
         $this->view('my_bookings/index', $data);
     }

@@ -26,14 +26,36 @@
 
         <!-- START: Page Content Wrapper -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
-            
             <?php flash('booking_message'); ?>
 
             <!-- Wrapper สำหรับจัดการเนื้อหาที่กว้าง (ปฏิทิน) -->
-            <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full overflow-x-auto">
-                <div id="calendar-container" class="h-full min-w-[700px]"></div>
-            </div>
+            <div class="bg-white/50 backdrop-blur-xl p-6 rounded-2xl shadow-lg h-full">
+                <div class="overflow-x-auto">
+                    <!-- ปรับแก้: เอา h-full ออกจาก calendar-container -->
+                    <div id="calendar-container" class="min-w-[700px]"></div>
+                </div>
 
+                <!-- 
+                ============================================================
+                START: เพิ่มส่วน Legend เข้ามาใหม่
+                ============================================================
+                -->
+                <div class="mt-4 border-t pt-4">
+                    <h4 class="font-semibold text-gray-600 mb-2">สีประจำห้อง:</h4>
+                    <div class="flex flex-wrap gap-x-4 gap-y-2">
+                        <?php if (!empty($data['rooms'])) : ?>
+                            <?php foreach ($data['rooms'] as $room) : ?>
+                                <div class="flex items-center">
+                                    <span class="w-4 h-4 rounded-full mr-2" style="background-color: <?php echo htmlspecialchars($room->color); ?>"></span>
+                                    <span class="text-sm text-gray-700"><?php echo htmlspecialchars($room->name); ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <!-- END: ส่วน Legend -->
+
+            </div>
         </main>
         <!-- END: Page Content Wrapper -->
 
@@ -76,12 +98,28 @@ document.addEventListener('DOMContentLoaded', function() {
             let bgColor = arg.event.backgroundColor || '#3788d8'; 
             let textColor = '#ffffff';
 
-            let eventHtml = `
-                <div class="fc-event-main-frame p-1 overflow-hidden" style="background-color: ${bgColor}; color: ${textColor}; border-color: ${bgColor};">
-                    <b>${timeText}</b> <span>${title} (${roomName})</span>
-                </div>
-            `;
-            return { html: eventHtml };
+            // สร้าง Element หลักของ Event
+            let eventEl = document.createElement('div');
+            eventEl.classList.add('fc-event-main', 'flex', 'items-center', 'w-full', 'h-full', 'p-1', 'overflow-hidden');
+            eventEl.style.backgroundColor = bgColor;
+            eventEl.style.color = textColor;
+            
+            // 1. สร้าง "แถบสี" ด้านซ้าย
+            let borderEl = document.createElement('div');
+            borderEl.classList.add('w-1', 'h-full', 'mr-2');
+            // ทำให้แถบสีเข้มขึ้นเล็กน้อยเพื่อความสวยงาม
+            borderEl.style.backgroundColor = 'rgba(0,0,0,0.2)';
+
+            // 2. สร้าง "เนื้อหา" (เวลา + หัวข้อ)
+            let contentEl = document.createElement('div');
+            contentEl.innerHTML = `<b>${timeText}</b> <span>${title} (${roomName})</span>`;
+
+            // 3. ประกอบร่าง
+            eventEl.appendChild(borderEl);
+            eventEl.appendChild(contentEl);
+            
+            // ส่งกลับไปในรูปแบบของ DOM Nodes
+            return { domNodes: [eventEl] };
         },
 
         eventClick: function(info) {

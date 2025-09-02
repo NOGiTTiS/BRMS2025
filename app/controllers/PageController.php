@@ -1,35 +1,46 @@
 <?php
 class PageController extends Controller {
+    // 1. ประกาศ Property ของคลาสไว้ข้างบน
+    private $roomModel;
+
+    public function __construct(){
+        // 2. โหลด Model เข้ามาเก็บไว้ใน Property
+        $this->roomModel = $this->model('Room');
+    }
 
     // เมธอดสำหรับหน้าแรกสุด (Landing Page)
     public function index(){
-        // ถ้าผู้ใช้ล็อกอินอยู่แล้ว ให้พาไปที่ Dashboard
         if(isLoggedIn()){
             header('location: ' . URLROOT . '/dashboard');
             exit();
         }
         
-        // ถ้ายังไม่ล็อกอิน ให้แสดงหน้าปฏิทินสาธารณะ
+        // 3. เรียกใช้ Property เพื่อดึงข้อมูล
+        $rooms = $this->roomModel->getRooms();
+
         $data = [
             'title' => 'ปฏิทินการจองห้องประชุม',
-            'active_menu' => 'calendar'
+            'active_menu' => 'calendar',
+            'rooms' => $rooms // <-- ส่งข้อมูลไปให้ View
         ];
 
         $this->view('pages/index', $data);
     }
 
-    // เมธอดใหม่สำหรับแสดงหน้าปฏิทินของผู้ใช้ที่ล็อกอินแล้ว
+    // เมธอดสำหรับแสดงหน้าปฏิทินของผู้ใช้ที่ล็อกอินแล้ว
     public function calendar(){
-        // ป้องกัน: ถ้ายังไม่ได้ล็อกอิน ให้เด้งไปหน้า login
         if(!isLoggedIn()){
             header('location: ' . URLROOT . '/user/login');
             exit();
         }
-
-        // แสดงหน้าปฏิทินตามปกติ
+        
+        // 3. เรียกใช้ Property เพื่อดึงข้อมูล
+        $rooms = $this->roomModel->getRooms();
+        
         $data = [
             'title' => 'ปฏิทินการจองห้องประชุม',
-            'active_menu' => 'calendar'
+            'active_menu' => 'calendar',
+            'rooms' => $rooms // <-- ส่งข้อมูลไปให้ View
         ];
 
         $this->view('pages/index', $data);

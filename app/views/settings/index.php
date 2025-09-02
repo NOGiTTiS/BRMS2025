@@ -1,22 +1,30 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
-
-<!-- div หลักของ Layout -->
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
-    <!-- Sidebar & Overlay -->
+    <!-- Overlay for mobile -->
+    <div x-show="sidebarOpen" 
+         @click="sidebarOpen = false" 
+         class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-50"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-50"
+         x-transition:leave-end="opacity-0">
+    </div>
+
+    <!-- Sidebar -->
     <?php include APPROOT . '/views/inc/sidebar.php'; ?>
 
-    <!-- START: Main Content Area -->
+    <!-- Main Content Area -->
     <div class="flex flex-col flex-1 md:w-0">
 
         <!-- Top Navigation -->
         <?php include APPROOT . '/views/inc/topnav.php'; ?>
 
-        <!-- START: Page Content Wrapper -->
+        <!-- Page Content Wrapper -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
             
-            <h1 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h1>
-
             <?php flash('setting_message'); ?>
 
             <div class="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-4xl mx-auto">
@@ -57,7 +65,7 @@
                             <?php endif; ?>
                             <input type="file" name="site_favicon" class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
                         </div>
-                        <div>
+                         <div>
                             <label for="sidebar_color" class="block text-gray-700 font-semibold">สี Sidebar</label>
                             <input type="color" name="sidebar_color" class="w-20 h-10 mt-1 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['settings']['sidebar_color'] ?? '#DB2777'); ?>">
                         </div>
@@ -110,11 +118,6 @@
             </div>
             
         </main>
-        <!-- END: Page Content Wrapper -->
-
     </div>
-    <!-- END: Main Content Area -->
-
 </div>
-
 <?php require APPROOT . '/views/inc/footer.php'; ?>

@@ -1,30 +1,58 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
+
+    <!-- Overlay for mobile -->
+    <div x-show="sidebarOpen" 
+         @click="sidebarOpen = false" 
+         class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-50"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-50"
+         x-transition:leave-end="opacity-0">
+    </div>
+
+    <!-- Sidebar -->
     <?php include APPROOT . '/views/inc/sidebar.php'; ?>
+
+    <!-- Main Content Area -->
     <div class="flex flex-col flex-1 md:w-0">
+
+        <!-- Top Navigation -->
         <?php include APPROOT . '/views/inc/topnav.php'; ?>
+
+        <!-- Page Content Wrapper -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
-            <div class="overflow-x-auto">
-                <h1 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h1>
-                <?php flash('booking_manage_message'); ?>
-                <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                    <table class="min-w-full leading-normal">
-                        <thead>
-                            <tr>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">หัวข้อ</th>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ผู้จอง</th>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ห้อง</th>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">เวลาเริ่ม</th>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">สถานะ</th>
-                                <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            
+            <?php flash('booking_manage_message'); ?>
+
+            <!-- Card ครอบตาราง พร้อม overflow-x-auto -->
+            <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">หัวข้อ</th>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ผู้จอง</th>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ห้อง</th>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">เวลาเริ่ม</th>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">สถานะ</th>
+                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(empty($data['bookings'])): ?>
+                            <tr><td colspan="6" class="text-center py-10 text-gray-500">ยังไม่มีรายการจอง</td></tr>
+                        <?php else: ?>
                             <?php foreach($data['bookings'] as $booking) : ?>
                             <tr>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><a href="<?php echo URLROOT; ?>/booking/show/<?php echo $booking->id; ?>" class="text-gray-900 hover:text-pink-600 font-semibold"><?php echo $booking->subject; ?></a></td>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo $booking->user_username; ?></td>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo $booking->room_name; ?></td>
+                                <td class="px-5 py-5 border-b bg-white text-sm">
+                                    <a href="<?php echo URLROOT; ?>/booking/show/<?php echo $booking->id; ?>" class="text-gray-900 hover:text-pink-600 font-semibold whitespace-nowrap">
+                                        <?php echo htmlspecialchars($booking->subject); ?>
+                                    </a>
+                                </td>
+                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->user_username); ?></td>
+                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->room_name); ?></td>
                                 <td class="px-5 py-5 border-b bg-white text-sm whitespace-nowrap"><?php echo date('d/m/Y H:i', strtotime($booking->start_time)); ?></td>
                                 <td class="px-5 py-5 border-b bg-white text-sm">
                                     <?php
@@ -51,21 +79,30 @@
                                 </td>
                             </tr>
                             <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
+
         </main>
     </div>
 </div>
+
 <script>
 function confirmDeleteBooking(id) {
     Swal.fire({
-        title: 'คุณแน่ใจหรือไม่?', text: "คุณต้องการลบการจองนี้ใช่หรือไม่?", icon: 'warning',
-        showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
-        confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "คุณต้องการลบการจองนี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
     }).then((result) => {
-        if (result.isConfirmed) { document.getElementById('delete-booking-form-' + id).submit(); }
+        if (result.isConfirmed) {
+            document.getElementById('delete-booking-form-' + id).submit();
+        }
     })
 }
 </script>

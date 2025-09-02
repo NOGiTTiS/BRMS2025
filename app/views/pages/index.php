@@ -91,12 +91,37 @@ document.addEventListener('DOMContentLoaded', function() {
             let startTime = formatThaiForModal(info.event.start);
             let endTime = formatThaiForModal(info.event.end);
             
+            // ---- 1. แก้ไขส่วนรูปภาพ ----
             let layoutImageHtml = '';
             if (props.room_layout_image) {
                 let imageUrl = `<?php echo URLROOT; ?>/uploads/layouts/${props.room_layout_image}`;
-                layoutImageHtml = `<a href="${imageUrl}" target="_blank" class="text-blue-500 hover:underline">ดูรูปภาพ</a>`;
+                layoutImageHtml = `
+                    <a href="${imageUrl}" target="_blank">
+                        <img src="${imageUrl}" alt="รูปแบบการจัดห้อง" class="max-w-xs mt-2 h-auto rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    </a>
+                `;
             } else {
-                layoutImageHtml = 'ไม่มี';
+                layoutImageHtml = '<span class="text-gray-500">ไม่ได้ระบุ</span>';
+            }
+
+            // ---- 2. แก้ไขส่วนสถานะ ----
+            let status_class = '';
+            let status_text = '';
+            switch (props.status) {
+                case 'approved':
+                    status_class = 'bg-green-100 text-green-800';
+                    status_text = 'อนุมัติแล้ว';
+                    break;
+                case 'pending':
+                    status_class = 'bg-yellow-100 text-yellow-800';
+                    status_text = 'รออนุมัติ';
+                    break;
+                case 'rejected':
+                    status_class = 'bg-red-100 text-red-800';
+                    status_text = 'ปฏิเสธ';
+                    break;
+                default:
+                    status_text = props.status;
             }
 
             Swal.fire({
@@ -116,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>หมายเหตุ:</strong> ${props.note || '-'}</p>
                         <p><strong>รูปแบบการจัดห้อง:</strong> ${layoutImageHtml}</p>
                         <hr class="my-2">
-                        <p><strong>สถานะ:</strong> <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-sm">${props.status}</span></p>
+                        <p><strong>สถานะ:</strong> <span class="px-3 py-1.5 text-sm font-bold leading-tight rounded-full ${status_class}">${status_text}</span></p>
                     </div>
                 `,
                 showCloseButton: true,

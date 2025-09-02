@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- เปลี่ยน Title -->
     <title><?php echo $data['title']; ?> | <?php echo setting('site_name'); ?></title>
-    <!-- เพิ่ม Favicon -->
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?php echo URLROOT; ?>/uploads/favicons/<?php echo setting('site_favicon'); ?>?v=<?php echo time(); ?>">
     
     <!-- CSS & Fonts -->
@@ -23,25 +23,13 @@
         body { font-family: 'Prompt', sans-serif; }
     </style>
 
-    <!-- START: Flash Message Handler -->
-    <?php if(isset($_SESSION['notification'])): ?>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: '<?php echo $_SESSION['notification_type']; ?>',
-                    title: '<?php echo $_SESSION['notification']; ?>',
-                    confirmButtonText: 'ตกลง',
-                    confirmButtonColor: '#a855f7'
-                });
-            });
-        </script>
-        <?php
-            // ล้าง session หลังจากเตรียมสคริปต์แล้ว
-            unset($_SESSION['notification']);
-            unset($_SESSION['notification_type']);
-        ?>
-    <?php endif; ?>
-    <!-- END: Flash Message Handler -->
+        <!-- 
+        ============================================================
+        START: Flash Message Handler (เรียกใช้ฟังก์ชันใหม่)
+        ============================================================
+        -->
+        <?php display_flash_messages(); ?>
+        <!-- END: Flash Message Handler -->
 
-</head>
-<body class="h-full">
+    </head>
+    <body class="h-full">

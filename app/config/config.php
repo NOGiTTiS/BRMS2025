@@ -6,6 +6,12 @@ define('DB_USER', 'root');                   // <-- แก้ไขเป็น 
 define('DB_PASS', '');                       // <-- แก้ไขเป็น password ของคุณ
 define('DB_NAME', 'db_brms'); // <-- ชื่อฐานข้อมูลตามรูป
 
+// //Deployment
+// define('DB_HOST', 'localhost');
+// define('DB_USER', 'krusit51_db_brms');                   // <-- แก้ไขเป็น username ของคุณ
+// define('DB_PASS', '6dntVw2vxk7cbducZ8mn');                       // <-- แก้ไขเป็น password ของคุณ
+// define('DB_NAME', 'krusit51_db_brms'); // <-- ชื่อฐานข้อมูลตามรูป
+
 // --- ตั้งค่า Path และ URL ---
 // App Root (เช่น C:\xampp\htdocs\brms\app)
 define('APPROOT', dirname(dirname(__FILE__)));

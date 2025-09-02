@@ -126,12 +126,22 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const advanceDays = <?php echo setting('booking_advance_days', 1); ?>;
-        const today = new Date();
-        today.setDate(today.getDate() + advanceDays);
-        const minDate = today.toISOString().split('T')[0];
-        document.getElementsByName('start_date')[0].setAttribute('min', minDate);
-        document.getElementsByName('end_date')[0].setAttribute('min', minDate);
+        // --- ส่วนที่เพิ่มเข้ามา ---
+        // ตรวจสอบ Role ของผู้ใช้ที่ส่งมาจาก PHP
+        const userRole = '<?php echo $_SESSION['user_role']; ?>';
+
+        // ถ้าผู้ใช้ไม่ใช่ admin, ให้ทำการล็อกปฏิทิน
+        if (userRole !== 'admin') {
+            const advanceDays = <?php echo setting('booking_advance_days', 1); ?>;
+            const today = new Date();
+            today.setDate(today.getDate() + advanceDays);
+            const minDate = today.toISOString().split('T')[0];
+            
+            document.getElementsByName('start_date')[0].setAttribute('min', minDate);
+            document.getElementsByName('end_date')[0].setAttribute('min', minDate);
+        }
+        // ถ้าเป็น admin, โค้ดส่วนนี้จะถูกข้ามไปทั้งหมด ทำให้ไม่มีการตั้งค่า 'min'
+        // --- จบส่วนที่เพิ่ม ---
     });
 </script>
 

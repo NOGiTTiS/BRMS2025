@@ -2,6 +2,8 @@
 class BookingController extends Controller
 {
     private $bookingModel;
+    private $roomModel;
+    private $equipmentModel;
 
     public function __construct()
     {
@@ -118,11 +120,14 @@ class BookingController extends Controller
             // ... add more validation as needed
 
             // --- เพิ่มการตรวจสอบวันที่จองล่วงหน้า ---
-            $advanceDays = (int)setting('booking_advance_days', 1);
-            $minBookingDate = date('Y-m-d', strtotime("+$advanceDays days"));
+            if($_SESSION['user_role'] !== 'admin'){
+                $advanceDays = (int)setting('booking_advance_days', 1);
+                $minBookingDate = date('Y-m-d', strtotime("+$advanceDays days"));
 
-            if($data['start_date'] < $minBookingDate){
-                $data['room_id_err'] = 'ไม่สามารถจองได้! ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
+                if($data['start_date'] < $minBookingDate){
+                    // เปลี่ยนจาก room_id_err เป็น date_err เพื่อไม่ให้ไปทับซ้อนกับ error การจองซ้อน
+                    $data['date_err'] = 'ไม่สามารถจองได้! ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
+                }
             }
             // --- จบส่วนที่เพิ่ม ---
 

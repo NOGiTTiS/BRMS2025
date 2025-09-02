@@ -1,5 +1,5 @@
 <?php
-class MyBookingController extends Controller {
+class MybookingController extends Controller {
     private $bookingModel;
 
     public function __construct(){

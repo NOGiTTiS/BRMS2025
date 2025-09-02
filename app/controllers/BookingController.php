@@ -189,7 +189,7 @@ class BookingController extends Controller
                     $message .= "<b>หัวข้อ:</b> " . htmlspecialchars($bookingDataToSave['subject']) . "\n";
                     $message .= "<b>ห้อง:</b> " . htmlspecialchars($room_name) . "\n";
                     $message .= "<b>เวลา:</b> " . date('d/m/Y H:i', strtotime($bookingDataToSave['start_time'])) . "\n";
-                    $message .= "<b>โดย:</b> " . htmlspecialchars($_SESSION['user_name']) . "\n\n";
+                    $message .= "<b>ผู้จอง:</b> " . htmlspecialchars($_SESSION['user_name']) . "\n\n";
                     // ดึง Public URL จาก Setting
                     $publicUrl = setting('public_url', URLROOT); // ใช้ URLROOT เป็นค่าสำรอง
                     $detailsLink = $publicUrl . "/booking/show/" . $newBookingId;

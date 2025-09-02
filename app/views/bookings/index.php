@@ -51,7 +51,7 @@
                                         <?php echo htmlspecialchars($booking->subject); ?>
                                     </a>
                                 </td>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->user_username); ?></td>
+                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->user_fullname); ?></td>
                                 <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->room_name); ?></td>
                                 <td class="px-5 py-5 border-b bg-white text-sm whitespace-nowrap"><?php echo date('d/m/Y H:i', strtotime($booking->start_time)); ?></td>
                                 <td class="px-5 py-5 border-b bg-white text-sm">

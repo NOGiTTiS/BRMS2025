@@ -96,7 +96,8 @@ class Booking {
             SELECT 
                 b.*, 
                 r.name as room_name,
-                u.username as user_username
+                u.username as user_username,
+                CONCAT(u.first_name, " ", u.last_name) AS user_fullname
             FROM bookings as b
             JOIN rooms as r ON b.room_id = r.id
             JOIN users as u ON b.user_id = u.id

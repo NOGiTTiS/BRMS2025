@@ -58,6 +58,10 @@
         <div class="text-center">
             <a href="<?php echo URLROOT; ?>/user/login" class="text-sm text-pink-100 hover:underline">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
         </div>
+
+        <p class="mt-6 text-center text-sm text-white/70">
+            <?php echo htmlspecialchars(str_replace('{year}', date('Y'), setting('copyright_text', '© {year} BRMS Project'))); ?>
+        </p>
     </div>
 </div>
 <?php require APPROOT . '/views/inc/footer.php'; ?>

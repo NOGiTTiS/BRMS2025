@@ -57,6 +57,11 @@
                     </a>
                 </li>
                 <?php endif; ?>
+                <li class="mb-2">
+                    <a href="<?php echo URLROOT; ?>/report" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo ($data['active_menu'] == 'reports') ? 'bg-pink-700' : ''; ?>">
+                        <span>📄</span><span class="ml-2">รายงาน</span>
+                    </a>
+                </li>
 
                 <li class="mb-2">
                     <a href="<?php echo URLROOT; ?>/page/calendar" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'active-menu' : ''; ?>">

@@ -24,9 +24,10 @@
                 <!-- ซ่อนข้อความสวัสดีบนจอมือถือ, แสดงเมื่อเป็น sm ขึ้นไป -->
                 <span class="hidden sm:inline text-gray-700 whitespace-nowrap">สวัสดี, <?php echo explode(' ', $_SESSION['user_name'])[0]; ?></span>
                 
-                <a href="<?php echo URLROOT; ?>/user/logout" class="bg-red-500 text-white font-bold py-2 px-3 sm:px-4 rounded-lg shadow-md hover:bg-red-600 transition whitespace-nowrap text-sm sm:text-base">
+                <!-- เปลี่ยนจาก a href เป็น button onclick -->
+                <button onclick="confirmLogout()" class="bg-red-500 text-white font-bold py-2 px-3 sm:px-4 rounded-lg shadow-md hover:bg-red-600 transition whitespace-nowrap text-sm sm:text-base">
                     ออกจากระบบ
-                </a>
+                </button>
             </div>
         <?php else : ?>
             <a href="<?php echo URLROOT; ?>/user/login" class="bg-pink-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-pink-600 transition whitespace-nowrap">

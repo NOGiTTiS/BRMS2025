@@ -88,10 +88,11 @@
                 <?php endif; ?>
 
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/user/logout" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap">
-                        <span>🚪</span><span class="ml-2">ออกจากระบบ</span>
-                    </a>
+                    <!-- เปลี่ยนจาก a href เป็น button onclick -->
+                    <button onclick="confirmLogout()" class="w-full flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap text-left">
+                        <span>🚪</span>
+                        <span class="ml-2">ออกจากระบบ</span>
+                    </button>
                 </li>
             <?php else : ?>
                 <!-- เมนูก่อน Login -->

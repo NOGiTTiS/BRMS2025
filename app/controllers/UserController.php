@@ -246,6 +246,8 @@ class UserController extends Controller {
     // สร้างเมธอด logout
     public function logout(){
         logout(); // เรียกใช้ helper
-        header('location: ' . URLROOT . '/user/login'); // กลับไปหน้า login
+        header('location: ' . URLROOT); // กลับไปหน้า ปฏิทิน
+        //header('location: ' . URLROOT . '/user/login'); // กลับไปหน้า login
+        exit(); 
     }
 }

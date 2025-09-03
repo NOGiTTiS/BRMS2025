@@ -238,14 +238,45 @@ class BookingController extends Controller
             exit();
         }
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->bookingModel->approveBooking($id, $_SESSION['user_id'])){
-                flash('booking_manage_message', 'อนุมัติการจองสำเร็จ', 'swal-success');
+            // 1. ดึงข้อมูลการจองที่กำลังจะอนุมัติมาก่อน
+            $bookingToApprove = $this->bookingModel->getBookingById($id);
+
+            // ตรวจสอบว่ามี booking นี้อยู่จริง
+            if(!$bookingToApprove){
+                flash('notification', 'ไม่พบรายการจองที่ต้องการ', 'error');
                 header('location: ' . URLROOT . '/booking');
-            } else {
-                die('Something went wrong');
+                exit();
             }
+
+            // 2. ตรวจสอบความพร้อมของช่วงเวลาอีกครั้ง!
+            // (เราส่ง ID ของ booking นี้ไปด้วย เพื่อให้ฟังก์ชันยกเว้นตัวเองออกจากการตรวจสอบ)
+            $isAvailable = $this->bookingModel->isTimeSlotAvailable(
+                $bookingToApprove->room_id, 
+                $bookingToApprove->start_time, 
+                $bookingToApprove->end_time,
+                $id // Exclude self
+            );
+
+            if ($isAvailable) {
+                // 3. ถ้าว่าง, ให้อนุมัติ
+                if($this->bookingModel->approveBooking($id, $_SESSION['user_id'])){
+                    flash('notification', 'อนุมัติการจองสำเร็จ', 'success');
+                    // อาจจะเพิ่มการส่ง Email/Line แจ้งเตือนผู้ใช้ที่นี่
+                } else {
+                    flash('notification', 'เกิดข้อผิดพลาดในการอนุมัติ', 'error');
+                }
+            } else {
+                // 4. ถ้าไม่ว่าง, แจ้งเตือน Admin และปฏิเสธการจองนี้โดยอัตโนมัติ
+                $this->bookingModel->rejectBooking($id, $_SESSION['user_id']);
+                flash('notification', 'อนุมัติไม่สำเร็จ! ช่วงเวลานี้ถูกจองไปแล้ว (รายการนี้ถูกปฏิเสธโดยอัตโนมัติ)', 'error');
+            }
+
+            header('location: ' . URLROOT . '/booking');
+            exit();
+            
         } else {
             header('location: ' . URLROOT . '/booking');
+            exit();
         }
     }
 

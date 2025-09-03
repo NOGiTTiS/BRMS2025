@@ -86,11 +86,17 @@
     }
 
     public function commit(){
-        return $this->dbh->commit();
+      if ($this->dbh->inTransaction()) {
+          return $this->dbh->commit();
+      }
+      return false;
     }
 
     public function rollBack(){
-        return $this->dbh->rollBack();
+        if ($this->dbh->inTransaction()) {
+            return $this->dbh->rollBack();
+        }
+        return false;
     }
 
     // --- Last Insert ID Function ---

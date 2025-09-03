@@ -33,6 +33,7 @@ class UserController extends Controller {
             $sanitized_post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
                 'id' => $id,
+                'title' => 'สมัครสมาชิก',
                 'first_name' => trim($sanitized_post['first_name']),
                 'last_name' => trim($sanitized_post['last_name']),
                 'email' => trim($sanitized_post['email']),
@@ -179,7 +180,7 @@ class UserController extends Controller {
         } else {
             // โหลดฟอร์มเปล่าสำหรับกรอกข้อมูลครั้งแรก
             $data = [
-                'first_name' => '', 'last_name' => '', 'username' => '', 'email' => '', 'password' => '', 'confirm_password' => '',
+                'title' => 'สมัครสมาชิก','first_name' => '', 'last_name' => '', 'username' => '', 'email' => '', 'password' => '', 'confirm_password' => '',
                 'first_name_err' => '', 'last_name_err' => '', 'username_err' => '', 'email_err' => '', 'password_err' => '', 'confirm_password_err' => ''
             ];
             $this->view('users/register', $data);

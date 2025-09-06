@@ -75,6 +75,36 @@ class BookingController extends Controller
         }
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // --- Logic การจองแบบต่อเนื่อง ---
+            if (isset($_POST['is_recurring'])) {
+                $data = [
+                    'user_id' => $_SESSION['user_id'],
+                    'room_id' => $_POST['room_id'],
+                    'subject' => trim($_POST['subject']),
+                    'department' => trim($_POST['department']),
+                    'phone' => trim($_POST['phone']),
+                    'attendees' => trim($_POST['attendees']),
+                    'note' => trim($_POST['note']),
+                    'recurrence_pattern' => $_POST['recurrence_pattern'],
+                    'recurrence_end_date' => $_POST['recurrence_end_date'],
+                    'recurring_start_time' => $_POST['recurring_start_time'],
+                    'recurring_end_time' => $_POST['recurring_end_time'],
+                ];
+
+                // (ควรเพิ่ม Validation สำหรับ recurring form ที่นี่)
+
+                $result = $this->bookingModel->createRecurringBooking($data);
+                
+                if($result['success']){
+                    flash('notification', $result['message'], 'success');
+                    // (โค้ดส่ง Telegram สำหรับการจองต่อเนื่องสามารถเพิ่มได้ที่นี่)
+                    header('location: ' . URLROOT . '/mybooking');
+                } else {
+                    flash('notification', $result['message'], 'error');
+                    header('location: ' . URLROOT . '/booking/create');
+                }
+                exit();
+            }
             // 1. จัดการไฟล์อัปโหลด
             $uploadedFileName = FileHelper::upload($_FILES['room_layout_image']);
             $layout_err = '';

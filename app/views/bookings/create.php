@@ -27,7 +27,7 @@
             
             <a href="<?php echo URLROOT; ?>/page/calendar" class="text-gray-500 hover:text-gray-700 mb-4 inline-block">&larr; กลับไปหน้าปฏิทิน</a>
             
-            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-4xl mx-auto">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-4xl mx-auto" x-data="{ isRecurring: false }">
                 <h2 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h2>
                 
                 <form action="<?php echo URLROOT; ?>/booking/create" method="post" enctype="multipart/form-data">
@@ -51,24 +51,63 @@
                             <span class="text-red-500 text-sm"><?php echo $data['subject_err']; ?></span>
                         </div>
                     </div>
+
+                    <!-- Recurring Checkbox -->
+                    <div class="mb-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" x-model="isRecurring" name="is_recurring" value="1" class="h-4 w-4 rounded">
+                            <span class="ml-2 text-gray-700">จองแบบต่อเนื่อง (Recurring)</span>
+                        </label>
+                    </div>
                     
                     <!-- Date & Time -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-gray-700 font-semibold">วัน-เวลา เริ่ม</label>
-                            <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                <input type="date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_date']); ?>">
-                                <input type="time" name="start_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_time']); ?>">
+                    <div x-show="!isRecurring" x-transition>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <label class="block text-gray-700 font-semibold">วัน-เวลา เริ่ม</label>
+                                <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                                    <input type="date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_date']); ?>">
+                                    <input type="time" name="start_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_time']); ?>">
+                                </div>
                             </div>
-                        </div>
-                         <div>
-                            <label class="block text-gray-700 font-semibold">วัน-เวลา สิ้นสุด</label>
-                            <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                <input type="date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_date']); ?>">
-                                <input type="time" name="end_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_time']); ?>">
+                            <div>
+                                <label class="block text-gray-700 font-semibold">วัน-เวลา สิ้นสุด</label>
+                                <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                                    <input type="date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_date']); ?>">
+                                    <input type="time" name="end_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_time']); ?>">
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Recurring Options (แสดงเมื่อเป็น Recurring) -->
+                    <div x-show="isRecurring" x-transition class="border-t border-gray-200 pt-6 mt-4 space-y-4">
+                        <h3 class="font-semibold text-lg text-gray-800">ตั้งค่าการจองต่อเนื่อง</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-semibold">รูปแบบความถี่</label>
+                                <select name="recurrence_pattern" class="w-full mt-1 rounded border-gray-300">
+                                    <option value="weekly">ทุกสัปดาห์ (ในวันเดียวกัน)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-semibold">สิ้นสุดการจองในวันที่</label>
+                                <input type="date" name="recurrence_end_date" class="w-full mt-1 rounded border-gray-300">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div>
+                                <label class="block text-gray-700 font-semibold">เวลาเริ่ม</label>
+                                <input type="time" name="recurring_start_time" class="w-full mt-1 rounded border-gray-300">
+                            </div>
+                             <div>
+                                <label class="block text-gray-700 font-semibold">เวลาสิ้นสุด</label>
+                                <input type="time" name="recurring_end_time" class="w-full mt-1 rounded border-gray-300">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-6">
 
                     <!-- Contact & Attendees -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">

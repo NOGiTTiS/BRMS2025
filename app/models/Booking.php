@@ -159,6 +159,84 @@ class Booking {
         return $this->db->resultSet();
     }
 
+    /**
+     * สร้างการจองแบบต่อเนื่อง (Recurring)
+     * @return array ['success' => bool, 'message' => string]
+     */
+    public function createRecurringBooking($data){
+        $this->db->beginTransaction();
+
+        try {
+            // 1. INSERT ข้อมูลแม่ลงในตาราง booking_series
+            $this->db->query('
+                INSERT INTO booking_series (user_id, room_id, subject, department, phone, attendees, note, recurrence_pattern, recurrence_end_date)
+                VALUES (:user_id, :room_id, :subject, :department, :phone, :attendees, :note, :recurrence_pattern, :recurrence_end_date)
+            ');
+            $this->db->bind(':user_id', $data['user_id']);
+            $this->db->bind(':room_id', $data['room_id']);
+            $this->db->bind(':subject', $data['subject']);
+            $this->db->bind(':department', $data['department']);
+            $this->db->bind(':phone', $data['phone']);
+            $this->db->bind(':attendees', $data['attendees']);
+            $this->db->bind(':note', $data['note']);
+            $this->db->bind(':recurrence_pattern', $data['recurrence_pattern']);
+            $this->db->bind(':recurrence_end_date', $data['recurrence_end_date']);
+            $this->db->execute();
+            
+            $seriesId = $this->db->lastInsertId();
+
+            // 2. เตรียมข้อมูลสำหรับสร้างรายการจองย่อย
+            $startDate = new DateTime();
+            $endDate = new DateTime($data['recurrence_end_date']);
+            $endDate->modify('+1 day'); // เพิ่ม 1 วันเพื่อให้รวมวันสุดท้ายเข้าไปใน loop
+
+            $interval = new DateInterval('P1W'); // P1W = Period 1 Week
+            $dateRange = new DatePeriod($startDate, $interval, $endDate);
+            
+            $defaultStatus = setting('default_booking_status', 'pending');
+
+            // 3. วนลูปเพื่อสร้างรายการจองย่อย
+            foreach($dateRange as $date){
+                $bookingStartTimeStr = $date->format('Y-m-d') . ' ' . $data['recurring_start_time'];
+                $bookingEndTimeStr = $date->format('Y-m-d') . ' ' . $data['recurring_end_time'];
+
+                // 3.1 ตรวจสอบการจองซ้อนสำหรับแต่ละวัน
+                if(!$this->isTimeSlotAvailable($data['room_id'], $bookingStartTimeStr, $bookingEndTimeStr)){
+                    $this->db->rollBack();
+                    return [
+                        'success' => false,
+                        'message' => 'ไม่สามารถสร้างการจองได้ เนื่องจากวันที่ ' . $date->format('d/m/Y') . ' ไม่ว่าง'
+                    ];
+                }
+
+                // 3.2 INSERT รายการจองย่อย
+                $this->db->query('
+                    INSERT INTO bookings (series_id, user_id, room_id, subject, department, phone, attendees, start_time, end_time, note, status) 
+                    VALUES (:series_id, :user_id, :room_id, :subject, :department, :phone, :attendees, :start_time, :end_time, :note, :status)
+                ');
+                $this->db->bind(':series_id', $seriesId);
+                $this->db->bind(':user_id', $data['user_id']);
+                $this->db->bind(':room_id', $data['room_id']);
+                $this->db->bind(':subject', $data['subject']);
+                $this->db->bind(':department', $data['department']);
+                $this->db->bind(':phone', $data['phone']);
+                $this->db->bind(':attendees', $data['attendees']);
+                $this->db->bind(':start_time', $bookingStartTimeStr);
+                $this->db->bind(':end_time', $bookingEndTimeStr);
+                $this->db->bind(':note', $data['note']);
+                $this->db->bind(':status', $defaultStatus);
+                $this->db->execute();
+            }
+
+            $this->db->commit();
+            return ['success' => true, 'message' => 'สร้างการจองต่อเนื่องสำเร็จ'];
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return ['success' => false, 'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()];
+        }
+    }
+
     // ตรวจสอบว่าช่วงเวลาที่ต้องการจองนั้นว่างหรือไม่
     public function isTimeSlotAvailable($room_id, $start_time, $end_time, $exclude_booking_id = null){
         // Logic: ค้นหาการจองที่ "อนุมัติแล้ว" ของห้องนี้

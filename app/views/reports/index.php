@@ -9,78 +9,95 @@
             <!-- Filter Form -->
             <div class="bg-white p-6 rounded-lg shadow-md mb-8">
                 <form action="<?php echo URLROOT; ?>/report" method="post">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
                         <div>
                             <label for="start_date" class="block text-sm font-medium text-gray-700">วันที่เริ่มต้น</label>
-                            <input type="date" name="start_date" id="start_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="<?php echo $data['startDate']; ?>" required>
+                            <input type="date" name="start_date" class="mt-1 block w-full rounded-md" value="<?php echo $data['startDate']; ?>" required>
                         </div>
                         <div>
                             <label for="end_date" class="block text-sm font-medium text-gray-700">วันที่สิ้นสุด</label>
-                            <input type="date" name="end_date" id="end_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="<?php echo $data['endDate']; ?>" required>
+                            <input type="date" name="end_date" class="mt-1 block w-full rounded-md" value="<?php echo $data['endDate']; ?>" required>
                         </div>
-                        <div class="flex space-x-2">
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">สถานะ</label>
+                            <select name="status" class="mt-1 block w-full rounded-md">
+                                <option value="all" <?php echo ($data['status'] == 'all') ? 'selected' : ''; ?>>ทั้งหมด</option>
+                                <option value="approved" <?php echo ($data['status'] == 'approved') ? 'selected' : ''; ?>>อนุมัติแล้ว</option>
+                                <option value="pending" <?php echo ($data['status'] == 'pending') ? 'selected' : ''; ?>>รออนุมัติ</option>
+                                <option value="rejected" <?php echo ($data['status'] == 'rejected') ? 'selected' : ''; ?>>ปฏิเสธ</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 md:col-span-2 flex space-x-2">
                             <button type="submit" name="filter" value="1" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600">แสดงรายงาน</button>
                             <button type="submit" name="export" value="1" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">Export CSV</button>
                         </div>
                     </div>
                 </form>
             </div>
-
-            <!-- Report Table -->
-            <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-                <table class="min-w-full leading-normal">
-                    <thead>
-                        <tr>
-                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left">หัวข้อ</th>
-                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left">ห้อง</th>
-                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left">ผู้จอง</th>
-                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left">เวลาเริ่ม</th>
-                            <th class="px-5 py-3 border-b-2 bg-gray-100 text-left">สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if(empty($data['bookings'])): ?>
-                            <tr><td colspan="5" class="text-center py-10 text-gray-500">กรุณาเลือกช่วงวันที่แล้วกด "แสดงรายงาน"</td></tr>
-                        <?php else: ?>
-                            <?php foreach($data['bookings'] as $booking): ?>
-                            <tr>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->subject); ?></td>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->room_name); ?></td>
-                                <td class="px-5 py-5 border-b bg-white text-sm"><?php echo htmlspecialchars($booking->user_fullname); ?></td>
-                                <td class="px-5 py-5 border-b bg-white text-sm whitespace-nowrap"><?php echo date('d/m/Y H:i', strtotime($booking->start_time)); ?></td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <?php
-                                        $status_class = '';
-                                        $status_text = '';
-                                        switch ($booking->status) {
-                                            case 'approved':
-                                                $status_class = 'bg-green-200 text-green-800';
-                                                $status_text = 'อนุมัติแล้ว';
-                                                break;
-                                            case 'pending':
-                                                $status_class = 'bg-yellow-200 text-yellow-800';
-                                                $status_text = 'รออนุมัติ';
-                                                break;
-                                            case 'rejected':
-                                                $status_class = 'bg-red-200 text-red-800';
-                                                $status_text = 'ปฏิเสธ';
-                                                break;
-                                            default:
-                                                $status_text = htmlspecialchars($booking->status);
-                                                break;
-                                        }
-                                    ?>
-                                    <span class="px-2 py-1 font-semibold leading-tight rounded-full <?php echo $status_class; ?>">
-                                        <?php echo $status_text; ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            
+            <?php if($data['summary']): ?>
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md"><h4 class="text-gray-500">การจองทั้งหมด</h4><p class="text-3xl font-bold text-pink-500"><?php echo $data['summary']->total_bookings; ?></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><h4 class="text-gray-500">อนุมัติแล้ว</h4><p class="text-3xl font-bold text-green-500"><?php echo $data['summary']->approved_bookings; ?></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><h4 class="text-gray-500">รออนุมัติ</h4><p class="text-3xl font-bold text-yellow-500"><?php echo $data['summary']->pending_bookings; ?></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md"><h4 class="text-gray-500">ปฏิเสธ</h4><p class="text-3xl font-bold text-red-500"><?php echo $data['summary']->rejected_bookings; ?></p></div>
             </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold mb-4">สัดส่วนการใช้งานห้อง</h4>
+                    <div class="relative h-80"><canvas id="roomUsageChart"></canvas></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold mb-4">แนวโน้มการจองรายวัน</h4>
+                    <div class="relative h-80"><canvas id="dailyTrendChart"></canvas></div>
+                </div>
+            </div>
+            <?php else: ?>
+                <div class="text-center py-10 bg-white rounded-lg shadow-md"><p class="text-gray-500">กรุณาเลือกช่วงวันที่แล้วกด "แสดงรายงาน"</p></div>
+            <?php endif; ?>
         </main>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Room Usage Pie Chart
+    if(document.getElementById('roomUsageChart')){
+        const roomCtx = document.getElementById('roomUsageChart').getContext('2d');
+        const roomData = <?php echo json_encode($data['roomUsage']); ?>;
+        new Chart(roomCtx, {
+            type: 'pie',
+            data: {
+                labels: roomData.map(d => d.room_name),
+                datasets: [{
+                    data: roomData.map(d => d.booking_count),
+                    backgroundColor: ['#EC4899', '#8B5CF6', '#3B82F6', '#F59E0B', '#10B981', '#6366F1', '#EF4444'],
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // Daily Trend Line Chart
+    if(document.getElementById('dailyTrendChart')){
+        const trendCtx = document.getElementById('dailyTrendChart').getContext('2d');
+        const trendData = <?php echo json_encode($data['dailyTrend']); ?>;
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendData.map(d => new Date(d.booking_date).toLocaleDateString('th-TH')),
+                datasets: [{
+                    label: 'จำนวนการจอง',
+                    data: trendData.map(d => d.booking_count),
+                    borderColor: '#EC4899',
+                    tension: 0.1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+});
+</script>
 <?php require APPROOT . '/views/inc/footer.php'; ?>

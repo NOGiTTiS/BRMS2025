@@ -34,4 +34,72 @@ class Report {
         
         return $this->db->resultSet();
     }
+
+        // getBookingsByDateRange() จะถูกปรับปรุงใน Controller แทน
+
+    // สรุปข้อมูลตัวเลขสำคัญ
+    public function getSummaryStats($startDate, $endDate, $status){
+        $sql = "SELECT 
+                    COUNT(id) as total_bookings,
+                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_bookings,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_bookings,
+                    SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_bookings
+                FROM bookings 
+                WHERE start_time BETWEEN :start_date AND :end_date";
+        
+        if($status != 'all'){
+            $sql .= " AND status = :status";
+        }
+        
+        $this->db->query($sql);
+        $this->db->bind(':start_date', $startDate);
+        $this->db->bind(':end_date', $endDate . ' 23:59:59');
+        if($status != 'all'){
+            $this->db->bind(':status', $status);
+        }
+        return $this->db->single();
+    }
+
+    // ข้อมูลสำหรับกราฟวงกลม: สัดส่วนการใช้ห้อง
+    public function getRoomUsage($startDate, $endDate, $status){
+        $sql = "SELECT r.name as room_name, COUNT(b.id) as booking_count 
+                FROM bookings as b 
+                JOIN rooms as r ON b.room_id = r.id
+                WHERE b.start_time BETWEEN :start_date AND :end_date";
+
+        if($status != 'all'){
+            $sql .= " AND b.status = :status";
+        }
+
+        $sql .= " GROUP BY r.name ORDER BY booking_count DESC";
+
+        $this->db->query($sql);
+        $this->db->bind(':start_date', $startDate);
+        $this->db->bind(':end_date', $endDate . ' 23:59:59');
+        if($status != 'all'){
+            $this->db->bind(':status', $status);
+        }
+        return $this->db->resultSet();
+    }
+
+    // ข้อมูลสำหรับกราฟเส้น: แนวโน้มการจองรายวัน
+    public function getDailyTrend($startDate, $endDate, $status){
+        $sql = "SELECT DATE(start_time) as booking_date, COUNT(id) as booking_count
+                FROM bookings
+                WHERE start_time BETWEEN :start_date AND :end_date";
+
+        if($status != 'all'){
+            $sql .= " AND status = :status";
+        }
+
+        $sql .= " GROUP BY DATE(start_time) ORDER BY booking_date ASC";
+        
+        $this->db->query($sql);
+        $this->db->bind(':start_date', $startDate);
+        $this->db->bind(':end_date', $endDate . ' 23:59:59');
+        if($status != 'all'){
+            $this->db->bind(':status', $status);
+        }
+        return $this->db->resultSet();
+    }
 }

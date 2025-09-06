@@ -10,40 +10,47 @@ class ReportController extends Controller {
         $this->reportModel = $this->model('Report');
     }
 
-    public function index(){
-        $bookings = [];
-        // ตั้งค่าวันที่เริ่มต้นและสิ้นสุดเป็นค่าว่าง
-        $startDate = '';
-        $endDate = '';
+        public function index(){
+        // ตั้งค่า Default
+        $startDate = date('Y-m-01'); // วันแรกของเดือนปัจจุบัน
+        $endDate = date('Y-m-t');   // วันสุดท้ายของเดือนปัจจุบัน
+        $status = 'all';
+        $summary = null;
+        $roomUsage = [];
+        $dailyTrend = [];
 
-        // ตรวจสอบว่ามีการส่งฟอร์มมาหรือไม่
-        if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filter'])){
+        // ถ้ามีการส่งฟอร์มมา
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $startDate = $_POST['start_date'];
             $endDate = $_POST['end_date'];
-            if(!empty($startDate) && !empty($endDate)){
-                $bookings = $this->reportModel->getBookingsByDateRange($startDate, $endDate);
-            }
+            $status = $_POST['status'];
         }
-        
-        // จัดการการ Export
-        if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export'])){
-            $startDate = $_POST['start_date'];
-            $endDate = $_POST['end_date'];
-            if(!empty($startDate) && !empty($endDate)){
-                $bookings = $this->reportModel->getBookingsByDateRange($startDate, $endDate);
-                $this->exportToCsv($bookings, $startDate, $endDate);
-            }
-            // หยุดการทำงานหลังจาก export เสร็จ
-            exit();
+
+        // ดึงข้อมูลเมื่อมีวันที่ครบถ้วน
+        if(!empty($startDate) && !empty($endDate)){
+            $summary = $this->reportModel->getSummaryStats($startDate, $endDate, $status);
+            $roomUsage = $this->reportModel->getRoomUsage($startDate, $endDate, $status);
+            $dailyTrend = $this->reportModel->getDailyTrend($startDate, $endDate, $status);
         }
 
         $data = [
-            'title' => 'รายงานการจองห้องประชุม',
+            'title' => 'รายงานขั้นสูง',
             'active_menu' => 'reports',
-            'bookings' => $bookings,
             'startDate' => $startDate,
-            'endDate' => $endDate
+            'endDate' => $endDate,
+            'status' => $status,
+            'summary' => $summary,
+            'roomUsage' => $roomUsage,
+            'dailyTrend' => $dailyTrend
         ];
+        
+        // จัดการการ Export (ย้ายมาไว้ข้างล่าง)
+        if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export'])){
+            $bookings = $this->reportModel->getBookingsByDateRange($startDate, $endDate, $status);
+            $this->exportToCsv($bookings, $startDate, $endDate);
+            exit();
+        }
+
         $this->view('reports/index', $data);
     }
 

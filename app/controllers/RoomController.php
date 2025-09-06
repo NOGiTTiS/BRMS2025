@@ -39,6 +39,7 @@ class RoomController extends Controller {
 
             if(empty($data['name_err']) && empty($data['capacity_err'])){
                 if($this->roomModel->addRoom($data)){
+                    AuditLogHelper::logAction('CREATE_ROOM', 'Admin created a new room: ' . $data['name']);
                     flash('room_message', 'เพิ่มห้องประชุมสำเร็จ', 'swal-success');
                     header('location: ' . URLROOT . '/room');
                 } else {
@@ -76,6 +77,7 @@ class RoomController extends Controller {
 
             if(empty($data['name_err']) && empty($data['capacity_err'])){
                 if($this->roomModel->updateRoom($data)){
+                    AuditLogHelper::logAction('UPDATE_ROOM', "Admin updated room ID: {$id}");
                     flash('room_message', 'อัปเดตข้อมูลห้องสำเร็จ', 'swal-success');
                     header('location: ' . URLROOT . '/room');
                 } else {
@@ -104,6 +106,7 @@ class RoomController extends Controller {
     public function delete($id){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->roomModel->deleteRoom($id)){
+                AuditLogHelper::logAction('DELETE_ROOM', "Admin deleted room ID: {$id}");
                 flash('room_message', 'ลบห้องประชุมสำเร็จ', 'swal-success');
                 header('location: ' . URLROOT . '/room');
             } else {

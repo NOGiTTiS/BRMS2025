@@ -35,7 +35,7 @@ class SettingController extends Controller {
             foreach($settings as $name => $value){
                 $this->settingModel->updateSetting($name, $value);
             }
-
+            AuditLogHelper::logAction('UPDATE_SETTINGS', 'Admin updated system settings.');
             flash('setting_message', 'บันทึกการตั้งค่าสำเร็จ', 'swal-success');
             header('location: ' . URLROOT . '/setting');
             exit();

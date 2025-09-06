@@ -85,6 +85,11 @@
                             </a>
                         </li>
                         <li>
+                            <a href="<?php echo URLROOT; ?>/auditlog" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'audit_log') ? 'bg-pink-700' : ''; ?>">
+                                <span class="mr-2">📝</span>
+                                <span>Audit Log</span>
+                            </a>
+                        <li>
                             <a href="<?php echo URLROOT; ?>/report" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'reports') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">📄</span>
                                 <span>รายงาน</span>

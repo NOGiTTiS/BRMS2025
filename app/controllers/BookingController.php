@@ -180,6 +180,7 @@ class BookingController extends Controller
                 $newBookingId = $this->bookingModel->createBooking($bookingDataToSave);
 
                 if($newBookingId){
+                    AuditLogHelper::logAction('CREATE_BOOKING', "User created booking ID: {$newBookingId}");
                     // --- ส่งแจ้งเตือน Telegram ---
                     $room = $this->roomModel->getRoomById($bookingDataToSave['room_id']);
                     $room_name = $room ? $room->name : 'N/A';
@@ -260,6 +261,7 @@ class BookingController extends Controller
             if ($isAvailable) {
                 // 3. ถ้าว่าง, ให้อนุมัติ
                 if($this->bookingModel->approveBooking($id, $_SESSION['user_id'])){
+                    AuditLogHelper::logAction('APPROVE_BOOKING', "Admin approved booking ID: {$id}");
                     flash('notification', 'อนุมัติการจองสำเร็จ', 'success');
                     // อาจจะเพิ่มการส่ง Email/Line แจ้งเตือนผู้ใช้ที่นี่
                 } else {
@@ -268,6 +270,7 @@ class BookingController extends Controller
             } else {
                 // 4. ถ้าไม่ว่าง, แจ้งเตือน Admin และปฏิเสธการจองนี้โดยอัตโนมัติ
                 $this->bookingModel->rejectBooking($id, $_SESSION['user_id']);
+                AuditLogHelper::logAction('REJECT_BOOKING_AUTO', "Booking ID: {$id} was auto-rejected due to conflict.");
                 flash('notification', 'อนุมัติไม่สำเร็จ! ช่วงเวลานี้ถูกจองไปแล้ว (รายการนี้ถูกปฏิเสธโดยอัตโนมัติ)', 'error');
             }
 
@@ -288,6 +291,7 @@ class BookingController extends Controller
         }
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->bookingModel->rejectBooking($id, $_SESSION['user_id'])){
+                AuditLogHelper::logAction('REJECT_BOOKING', "Admin rejected booking ID: {$id}");
                 flash('booking_manage_message', 'ปฏิเสธการจองเรียบร้อย', 'swal-success');
                 header('location: ' . URLROOT . '/booking');
             } else {
@@ -348,6 +352,7 @@ class BookingController extends Controller
             }
 
             if($this->bookingModel->updateBooking($data)){
+                AuditLogHelper::logAction('UPDATE_BOOKING', "Admin updated booking ID: {$id}");
                 flash('booking_manage_message', 'อัปเดตการจองสำเร็จ', 'swal-success');
                 header('location: ' . URLROOT . '/booking/show/' . $id);
             } else {
@@ -381,6 +386,7 @@ class BookingController extends Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             // ควรมีการตรวจสอบเพิ่มเติมว่าการจองนี้มีอยู่จริงหรือไม่
             if($this->bookingModel->deleteBooking($id)){
+                AuditLogHelper::logAction('DELETE_BOOKING', "Admin deleted booking ID: {$id}");
                 flash('booking_manage_message', 'ลบการจองสำเร็จ', 'swal-success');
                 header('location: ' . URLROOT . '/booking');
             } else {

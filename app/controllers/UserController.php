@@ -223,6 +223,7 @@ class UserController extends Controller {
                     header('location: ' . URLROOT . '/dashboard');
                     exit(); // เพิ่ม exit() เพื่อความปลอดภัย
                 } else {
+                    AuditLogHelper::logAction('LOGIN_FAIL', 'Failed login attempt for user: ' . $data['username_email']);
                     $data['password_err'] = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
                     $this->view('users/login', $data);
                 }
@@ -245,6 +246,7 @@ class UserController extends Controller {
     
     // สร้างเมธอด logout
     public function logout(){
+        AuditLogHelper::logAction('LOGOUT', 'User ' . $_SESSION['user_username'] . ' logged out.');
         logout(); // เรียกใช้ helper
         header('location: ' . URLROOT); // กลับไปหน้า ปฏิทิน
         //header('location: ' . URLROOT . '/user/login'); // กลับไปหน้า login

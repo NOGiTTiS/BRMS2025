@@ -26,6 +26,13 @@
                 
                 <!-- เมนูสำหรับผู้ใช้ทั่วไป -->
                 <li class="mb-2">
+                    <a href="<?php echo URLROOT; ?>/profile" 
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'profile') ? 'active-menu' : ''; ?>">
+                        <span>👤</span><span class="ml-2">โปรไฟล์ของฉัน</span>
+                    </a>
+                </li>
+                
+                <li class="mb-2">
                     <a href="<?php echo URLROOT; ?>/mybooking" 
                     class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'my_bookings') ? 'active-menu' : ''; ?>">
                         <span>📖</span><span class="ml-2">การจองของฉัน</span>

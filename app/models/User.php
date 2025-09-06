@@ -122,4 +122,31 @@ class User {
             return false;
         }
     }
+
+        // อัปเดตข้อมูลโปรไฟล์ (ชื่อ-นามสกุล, อีเมล)
+    public function updateProfile($data){
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email WHERE id = :id');
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':first_name', $data['first_name']);
+        $this->db->bind(':last_name', $data['last_name']);
+        $this->db->bind(':email', $data['email']);
+
+        return $this->db->execute();
+    }
+
+    // เปลี่ยนรหัสผ่าน
+    public function changePassword($id, $new_password){
+        $this->db->query('UPDATE users SET password = :password WHERE id = :id');
+        $this->db->bind(':id', $id);
+        $this->db->bind(':password', $new_password);
+
+        return $this->db->execute();
+    }
+
+    // เพิ่มฟังก์ชันสำหรับดึงข้อมูลผู้ใช้ทั้งหมด (รวมรหัสผ่าน) เพื่อใช้ตรวจสอบ
+    public function getFullUserById($id){
+        $this->db->query('SELECT * FROM users WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
 }

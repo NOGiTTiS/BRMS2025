@@ -15,8 +15,20 @@ define('DB_NAME', 'db_brms'); // <-- ชื่อฐานข้อมูลต�
 // --- ตั้งค่า Path และ URL ---
 // App Root (เช่น C:\xampp\htdocs\brms\app)
 define('APPROOT', dirname(dirname(__FILE__)));
-// URL Root (เช่น http://localhost/brms)
-define('URLROOT', 'http://localhost/brms/public'); // <-- แก้ไขให้ตรงกับ URL โปรเจคของคุณ
+
+
+// --- Dynamic URL Root (Proxy Aware) ---
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $protocol = 'https://';
+} else {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+}
+$host = $_SERVER['HTTP_HOST'];
+$base_path = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/\\'); // ปรับให้ชี้ไปที่ Root ของโปรเจค
+define('URLROOT', $protocol . $host . $base_path);
+// --- End Dynamic URL Root ---
+
+
 // Site Name
 define('SITENAME', 'BRMS - Booking Room Management System');
 

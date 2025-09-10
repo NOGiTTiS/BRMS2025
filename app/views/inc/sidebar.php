@@ -4,7 +4,7 @@
     class="absolute inset-y-0 left-0 text-white w-64 p-4 space-y-6 z-20
            transform transition duration-300 ease-in-out
            md:relative md:translate-x-0 flex-shrink-0"
-    style="background-color: <?php echo setting('sidebar_color', '#DB2777'); ?>">
+    style="background-color:                             <?php echo setting('sidebar_color', '#DB2777'); ?>">
 
     <!-- Logo -->
     <a href="<?php echo URLROOT; ?>" class="text-white text-2xl font-bold flex items-center space-x-2">
@@ -15,38 +15,38 @@
     <!-- Navigation Links -->
     <nav>
         <ul>
-            <?php if(isLoggedIn()) : ?>
+            <?php if (isLoggedIn()): ?>
                 <!-- เมนูหลัง Login -->
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/dashboard" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'dashboard') ? 'active-menu' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/dashboard"
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap                                                                                                               <?php echo(isset($data['active_menu']) && $data['active_menu'] == 'dashboard') ? 'active-menu' : ''; ?>">
                         <span>📊</span><span class="ml-2">Dashboard</span>
                     </a>
                 </li>
-                
+
                 <!-- เมนูสำหรับผู้ใช้ทั่วไป -->
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/profile" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'profile') ? 'active-menu' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/profile"
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap                                                                                                               <?php echo(isset($data['active_menu']) && $data['active_menu'] == 'profile') ? 'active-menu' : ''; ?>">
                         <span>👤</span><span class="ml-2">โปรไฟล์ของฉัน</span>
                     </a>
                 </li>
-                
+
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/mybooking" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'my_bookings') ? 'active-menu' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/mybooking"
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap                                                                                                               <?php echo(isset($data['active_menu']) && $data['active_menu'] == 'my_bookings') ? 'active-menu' : ''; ?>">
                         <span>📖</span><span class="ml-2">การจองของฉัน</span>
                     </a>
                 </li>
 
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/page/calendar" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'active-menu' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>/page/calendar" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'active-menu' : ''; ?>">
                         <span>📅</span><span class="ml-2">ปฏิทิน</span>
                     </a>
                 </li>
 
                 <!-- เมนูสำหรับ Admin เท่านั้น -->
-                <?php if($_SESSION['user_role'] == 'admin') : ?>
+                <?php if ($_SESSION['user_role'] == 'admin'): ?>
                 <!-- Alpine.js component: x-data ประกาศตัวแปร isSettingsOpen -->
                 <li class="mb-2" x-data="{ isSettingsOpen: false }">
                     <!-- ปุ่มหลักสำหรับเปิด/ปิดเมนูย่อย -->
@@ -61,36 +61,36 @@
                     <!-- เมนูย่อยที่จะแสดง/ซ่อน -->
                     <ul x-show="isSettingsOpen" x-transition class="pl-6 mt-2 space-y-2">
                         <li>
-                            <a href="<?php echo URLROOT; ?>/user" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'users') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/user" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'users') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">👥</span>
                                 <span>จัดการผู้ใช้</span>
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo URLROOT; ?>/room" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'rooms') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/room" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'rooms') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">🏢</span>
                                 <span>จัดการห้องประชุม</span>
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo URLROOT; ?>/booking" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'manage_bookings') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/booking" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'manage_bookings') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">📋</span>
                                 <span>จัดการการจอง</span>
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo URLROOT; ?>/setting" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'settings') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/setting" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'settings') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">🔧</span>
                                 <span>ตั้งค่าระบบ</span>
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo URLROOT; ?>/auditlog" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'audit_log') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/auditLog" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'audit_log') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">📝</span>
                                 <span>Audit Log</span>
                             </a>
                         <li>
-                            <a href="<?php echo URLROOT; ?>/report" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'reports') ? 'bg-pink-700' : ''; ?>">
+                            <a href="<?php echo URLROOT; ?>/report" class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap<?php echo(isset($data['active_menu']) && $data['active_menu'] == 'reports') ? 'bg-pink-700' : ''; ?>">
                                 <span class="mr-2">📄</span>
                                 <span>รายงาน</span>
                             </a>
@@ -106,22 +106,22 @@
                         <span class="ml-2">ออกจากระบบ</span>
                     </button>
                 </li>
-            <?php else : ?>
+            <?php else: ?>
                 <!-- เมนูก่อน Login -->
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>" 
-                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap <?php echo (isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'active-menu' : ''; ?>">
+                    <a href="<?php echo URLROOT; ?>"
+                    class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap                                                                                                               <?php echo(isset($data['active_menu']) && $data['active_menu'] == 'calendar') ? 'active-menu' : ''; ?>">
                         <span>📅</span><span class="ml-2">ปฏิทิน</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/user/login" 
+                    <a href="<?php echo URLROOT; ?>/user/login"
                     class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap">
                         <span>🔒</span><span class="ml-2">เข้าสู่ระบบ</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="<?php echo URLROOT; ?>/user/register" 
+                    <a href="<?php echo URLROOT; ?>/user/register"
                     class="flex items-center p-2 hover:bg-pink-700 rounded transition-colors whitespace-nowrap">
                         <span>👤</span><span class="ml-2">สมัครสมาชิก</span>
                     </a>

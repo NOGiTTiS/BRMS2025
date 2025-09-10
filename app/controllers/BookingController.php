@@ -166,7 +166,10 @@ class BookingController extends Controller
                     'subject' => $data['subject'],
                     'department' => $data['department'],
                     'phone' => $data['phone'],
-                    'attendees' => $data['attendees'],
+                    // --- แก้ไขบรรทัดนี้ ---
+                    // ตรวจสอบว่าถ้า attendees เป็นค่าว่าง ให้ใช้ 0 แทน
+                    'attendees' => !empty($data['attendees']) ? (int)$data['attendees'] : 0,
+                    // --- จบส่วนแก้ไข ---
                     'start_time' => $data['start_date'] . ' ' . $data['start_time'],
                     'end_time' => $data['end_date'] . ' ' . $data['end_time'],
                     'note' => $data['note'],

@@ -86,7 +86,8 @@ class Booking {
         } catch (Exception $e) {
             $this->db->rollBack();
             // แสดง error เพื่อดีบัก (เมื่อเสร็จแล้วให้เปลี่ยนเป็น return false;)
-            die('Database Error: ' . $e->getMessage()); 
+            //die('Database Error: ' . $e->getMessage()); 
+            return false;
         }
     }
 
@@ -233,8 +234,8 @@ class Booking {
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
-            die('DB Error: ' . $e->getMessage()); // เปิดไว้ดีบัก
-            // return false;
+            //die('DB Error: ' . $e->getMessage()); // เปิดไว้ดีบัก
+            return false;
         }
     }
 

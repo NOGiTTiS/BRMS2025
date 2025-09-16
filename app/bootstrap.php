@@ -1,5 +1,8 @@
 <?php
 //die('Bootstrap file is working!');
+// --- Set Default Timezone ---
+date_default_timezone_set('Asia/Bangkok');
+
 // โหลดไฟล์ตั้งค่า
 require_once 'config/config.php';
 

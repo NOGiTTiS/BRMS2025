@@ -43,6 +43,9 @@ class MybookingController extends Controller {
             if($booking && $booking->user_id == $_SESSION['user_id']){
                 // 3. ถ้าใช่, ให้ทำการลบ
                 if($this->bookingModel->deleteBooking($id)){
+                    // บันทึก Log หลังจากลบสำเร็จ
+                    AuditLogHelper::logAction('USER_DELETE_BOOKING', 'User deleted their own booking ID: ' . $id);
+                    
                     flash('mybooking_message', 'ยกเลิกการจองสำเร็จ', 'swal-success');
                 } else {
                     flash('mybooking_message', 'เกิดข้อผิดพลาดในการยกเลิกการจอง', 'swal-error');

@@ -132,14 +132,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // ---- 1. แก้ไขส่วนรูปภาพ ----
             let layoutImageHtml = '';
             if (props.room_layout_image) {
-                let imageUrl = `<?php echo URLROOT; ?>/uploads/layouts/${props.room_layout_image}`;
-                layoutImageHtml = `
-                    <a href="${imageUrl}" target="_blank">
-                        <img src="${imageUrl}" alt="รูปแบบการจัดห้อง" class="max-w-xs mt-2 h-auto rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    </a>
-                `;
+                const imageUrl = `<?php echo URLROOT; ?>/uploads/layouts/${props.room_layout_image}`;
+                const fileName = props.room_layout_image.toLowerCase();
+                
+                // ตรวจสอบนามสกุลไฟล์
+                if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png') || fileName.endsWith('.gif')) {
+                    // ถ้าเป็นไฟล์รูปภาพ, ให้แสดง <img>
+                    layoutImageHtml = `
+                        <a href="${imageUrl}" target="_blank">
+                            <img src="${imageUrl}" alt="รูปแบบการจัดห้อง" class="max-w-xs mt-2 h-auto rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        </a>
+                    `;
+                } else {
+                    // ถ้าเป็นไฟล์ชนิดอื่น (PDF, DOCX, etc.), ให้แสดงเป็นลิงก์
+                    layoutImageHtml = `<a href="${imageUrl}" target="_blank" class="text-blue-500 hover:underline">คลิกเพื่อดูไฟล์ (${fileName})</a>`;
+                }
             } else {
-                layoutImageHtml = '<span class="text-gray-500">ไม่ได้ระบุ</span>';
+                layoutImageHtml = '<span class="text-gray-500">-</span>';
             }
 
             // ---- 2. แก้ไขส่วนสถานะ ----

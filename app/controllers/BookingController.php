@@ -68,13 +68,12 @@ class BookingController extends Controller
     // หน้าฟอร์มสร้างการจองใหม่
     public function create()
     {
-        // ป้องกัน: ต้องล็อกอินก่อนถึงจะจองได้
-        if (! isLoggedIn()) {
+        if (!isLoggedIn()) {
             header('location: ' . URLROOT . '/user/login');
             exit();
         }
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // 1. จัดการไฟล์อัปโหลด
             $uploadedFileName = FileHelper::upload($_FILES['room_layout_image']);
             $layout_err = '';
@@ -85,7 +84,7 @@ class BookingController extends Controller
 
             // 2. กรองข้อมูล POST
             $sanitized_post = [];
-            foreach($_POST as $key => $value){
+            foreach ($_POST as $key => $value) {
                 if (!is_array($value)) {
                     $sanitized_post[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                 } else {
@@ -95,6 +94,8 @@ class BookingController extends Controller
 
             // 3. เตรียมข้อมูลสำหรับ View (เผื่อเกิด Error)
             $data = [
+                'title' => 'จองห้องประชุม',
+                'active_menu' => 'my_bookings',
                 'rooms' => $this->roomModel->getRooms(),
                 'all_equipments' => $this->equipmentModel->getEquipments(),
                 'room_id' => trim($sanitized_post['room_id']),
@@ -108,68 +109,58 @@ class BookingController extends Controller
                 'end_time' => trim($sanitized_post['end_time']),
                 'note' => trim($sanitized_post['note']),
                 'equipments' => isset($sanitized_post['equipments']) ? $sanitized_post['equipments'] : [],
-                'title' => 'จองห้องประชุม',
                 'subject_err' => '',
                 'room_id_err' => '',
+                'date_err' => '',
                 'layout_err' => $layout_err,
             ];
 
             // 4. Validation
-            $data['subject_err'] = '';
-            $data['room_id_err'] = '';
-            $data['date_err'] = '';
-
-            if(empty($data['subject'])){ $data['subject_err'] = 'กรุณากรอกหัวข้อการประชุม'; }
-            if(empty($data['room_id'])){ $data['room_id_err'] = 'กรุณาเลือกห้องประชุม'; }
+            if (empty($data['subject'])) { $data['subject_err'] = 'กรุณากรอกหัวข้อการประชุม'; }
+            if (empty($data['room_id'])) { $data['room_id_err'] = 'กรุณาเลือกห้องประชุม'; }
 
             // --- เริ่มการตรวจสอบวันที่ (สำหรับ User เท่านั้น) ---
-            if($_SESSION['user_role'] === 'user'){
-                // ตรวจสอบการจองล่วงหน้า
+            if ($_SESSION['user_role'] === 'user') {
+                // ตรวจสอบการจองล่วงหน้า (ใช้ Timestamp เพื่อความแม่นยำ)
                 $advanceDays = (int)setting('booking_advance_days', 1);
-                $minBookingDate = date('Y-m-d', strtotime("+$advanceDays days"));
-                if($data['start_date'] < $minBookingDate){
+                $minBookingTimestamp = strtotime("+$advanceDays days", strtotime('today midnight'));
+                $selectedStartTimestamp = strtotime($data['start_date']);
+
+                if ($selectedStartTimestamp < $minBookingTimestamp) {
                     $data['date_err'] = 'ต้องจองล่วงหน้าอย่างน้อย ' . $advanceDays . ' วัน';
                 }
 
                 // ตรวจสอบการจองวันหยุด
                 $allowWeekend = setting('allow_weekend_booking', '0');
-                if($allowWeekend === '0' && empty($data['date_err'])){ // ตรวจสอบต่อเมื่อยังไม่เจอ error แรก
-                    $dayOfWeek = date('w', strtotime($data['start_date'])); // 0=Sun, 6=Sat
-                    if($dayOfWeek == 0 || $dayOfWeek == 6){
+                if ($allowWeekend === '0' && empty($data['date_err'])) {
+                    $dayOfWeek = date('w', $selectedStartTimestamp); // 0=Sun, 6=Sat
+                    if ($dayOfWeek == 0 || $dayOfWeek == 6) {
                         $data['date_err'] = 'ไม่สามารถจองในวันเสาร์-อาทิตย์ได้';
                     }
                 }
             }
-            // --- จบส่วนที่เพิ่ม ---
+            // --- จบการตรวจสอบวันที่ ---
 
-            // --- เพิ่มการตรวจสอบการจองซ้อน ---
-            if(empty($data['room_id_err']) && !empty($data['start_date']) && !empty($data['start_time']) && !empty($data['end_date']) && !empty($data['end_time'])){
-                
-                // 1. สร้างค่า DATETIME ที่สมบูรณ์ขึ้นมาก่อน
+            // --- ตรวจสอบการจองซ้อน ---
+            if (empty($data['room_id_err']) && empty($data['date_err']) && !empty($data['start_date']) && !empty($data['start_time']) && !empty($data['end_date']) && !empty($data['end_time'])) {
                 $full_start_time = $data['start_date'] . ' ' . $data['start_time'];
                 $full_end_time = $data['end_date'] . ' ' . $data['end_time'];
 
-                // 2. ส่งค่าที่สมบูรณ์นี้ไปให้ Model ตรวจสอบ
-                if(!$this->bookingModel->isTimeSlotAvailable($data['room_id'], $full_start_time, $full_end_time)){
-                    $data['room_id_err'] = 'ช่วงเวลานี้สำหรับห้องที่เลือกไม่ว่างแล้ว กรุณาตรวจสอบปฏิทินและเลือกเวลาใหม่';
+                if (!$this->bookingModel->isTimeSlotAvailable($data['room_id'], $full_start_time, $full_end_time)) {
+                    $data['date_err'] = 'ช่วงเวลานี้สำหรับห้องที่เลือกไม่ว่างแล้ว';
                 }
             }
 
-            // 5. ตรวจสอบว่าไม่มี error
-            if(empty($data['subject_err']) && empty($data['room_id_err']) && empty($data['layout_err'])){
+            // 5. ตรวจสอบว่าไม่มี error ใดๆ เลย
+            if (empty($data['subject_err']) && empty($data['room_id_err']) && empty($data['layout_err']) && empty($data['date_err'])) {
                 
-                // --- ส่วนที่แก้ไขสำคัญ ---
-                // 6. สร้าง Array ใหม่สำหรับส่งให้ Model โดยเฉพาะ
                 $bookingDataToSave = [
                     'user_id' => $_SESSION['user_id'],
                     'room_id' => $data['room_id'],
                     'subject' => $data['subject'],
                     'department' => $data['department'],
                     'phone' => $data['phone'],
-                    // --- แก้ไขบรรทัดนี้ ---
-                    // ตรวจสอบว่าถ้า attendees เป็นค่าว่าง ให้ใช้ 0 แทน
                     'attendees' => !empty($data['attendees']) ? (int)$data['attendees'] : 0,
-                    // --- จบส่วนแก้ไข ---
                     'start_time' => $data['start_date'] . ' ' . $data['start_time'],
                     'end_time' => $data['end_date'] . ' ' . $data['end_time'],
                     'note' => $data['note'],
@@ -177,35 +168,27 @@ class BookingController extends Controller
                     'room_layout_image' => $uploadedFileName
                 ];
 
-                
-                // 7. ส่งแค่ข้อมูลที่จำเป็นไปให้ Model
-                // เปลี่ยนการเรียกใช้ Model
                 $newBookingId = $this->bookingModel->createBooking($bookingDataToSave);
 
-                if($newBookingId){
+                if ($newBookingId) {
                     AuditLogHelper::logAction('CREATE_BOOKING', "User created booking ID: {$newBookingId}");
-                    // --- ส่งแจ้งเตือน Telegram ---
+                    
+                    // (ส่วนของการส่ง Telegram Notification)
                     $room = $this->roomModel->getRoomById($bookingDataToSave['room_id']);
                     $room_name = $room ? $room->name : 'N/A';
+                    $publicUrl = setting('public_url', URLROOT);
+                    $detailsLink = $publicUrl . "/booking/show/" . $newBookingId;
                     
-                    // สร้างข้อความโดยใช้ Tag HTML ของ Telegram
                     $message  = "🔔 <b>มีการจองใหม่</b> 🔔\n\n";
                     $message .= "<b>หัวข้อ:</b> " . htmlspecialchars($bookingDataToSave['subject']) . "\n";
                     $message .= "<b>ห้อง:</b> " . htmlspecialchars($room_name) . "\n";
                     $message .= "<b>เวลา:</b> " . date('d/m/Y H:i', strtotime($bookingDataToSave['start_time'])) . "\n";
                     $message .= "<b>ผู้จอง:</b> " . htmlspecialchars($_SESSION['user_name']) . "\n\n";
-                    // ดึง Public URL จาก Setting
-                    $publicUrl = setting('public_url', URLROOT); // ใช้ URLROOT เป็นค่าสำรอง
-                    $detailsLink = $publicUrl . "/booking/show/" . $newBookingId;
-
                     $message .= "<a href='" . $detailsLink . "'>คลิกเพื่อดูรายละเอียดและอนุมัติ</a>";
                     
-                    // ส่งแจ้งเตือน
                     NotificationHelper::sendTelegram($message);
 
-                    // ใช้ชื่อกลางๆ และส่ง type เป็น success
                     flash('notification', 'ส่งคำขอจองห้องประชุมสำเร็จแล้ว', 'success');
-                    
                     header('location: ' . URLROOT . '/mybooking');
                     exit();
                 } else {
@@ -215,21 +198,16 @@ class BookingController extends Controller
                 $this->view('bookings/create', $data);
             }
         } else {
-            // โหลดฟอร์มเปล่าพร้อมข้อมูลที่จำเป็น
-            $rooms      = $this->roomModel->getRooms();
-            $equipments = $this->equipmentModel->getEquipments();
-
+            // โหลดฟอร์มเปล่า
             $data = [
-                'title'          => 'จองห้องประชุม',
-                'active_menu'    => 'booking',
-                'rooms'          => $rooms,
-                'all_equipments' => $equipments,
-                // ... initial empty fields
-                'room_id'        => '', 'subject'     => '', 'department' => '', 'phone'    => '', 'attendees' => '',
-                'start_date'     => '', 'start_time'  => '', 'end_date'   => '', 'end_time' => '', 'note'      => '',
-                'equipments'     => [],
-                'subject_err'    => '', 'room_id_err' => '',
-                // ...
+                'title' => 'จองห้องประชุม',
+                'active_menu' => 'my_bookings',
+                'rooms' => $this->roomModel->getRooms(),
+                'all_equipments' => $this->equipmentModel->getEquipments(),
+                'room_id' => '', 'subject' => '', 'department' => '', 'phone' => '', 'attendees' => '',
+                'start_date' => '', 'start_time' => '', 'end_date' => '', 'end_time' => '', 'note' => '',
+                'equipments' => [],
+                'subject_err' => '', 'room_id_err' => '', 'date_err' => '', 'layout_err' => ''
             ];
             $this->view('bookings/create', $data);
         }

@@ -2,8 +2,8 @@
 <div x-data="{ sidebarOpen: false }" class="relative md:flex min-h-full">
 
     <!-- Overlay for mobile -->
-    <div x-show="sidebarOpen" 
-         @click="sidebarOpen = false" 
+    <div x-show="sidebarOpen"
+         @click="sidebarOpen = false"
          class="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
          x-transition:enter="transition-opacity ease-linear duration-300"
          x-transition:enter-start="opacity-0"
@@ -24,21 +24,21 @@
 
         <!-- Page Content Wrapper -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8">
-            
+
             <a href="<?php echo URLROOT; ?>/page/calendar" class="text-gray-500 hover:text-gray-700 mb-4 inline-block">&larr; กลับไปหน้าปฏิทิน</a>
-            
+
             <div class="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-4xl mx-auto">
                 <h2 class="text-2xl font-bold mb-6"><?php echo $data['title']; ?></h2>
-                
+
                 <form action="<?php echo URLROOT; ?>/booking/create" method="post" enctype="multipart/form-data">
                     <!-- Room & Subject -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                         <div>
                             <label for="room_id" class="block text-gray-700 font-semibold">ห้องประชุม <sup class="text-red-500">*</sup></label>
-                            <select name="room_id" class="w-full mt-1 px-3 py-2 border <?php echo (!empty($data['room_id_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded">
+                            <select name="room_id" class="w-full mt-1 px-3 py-2 border                                                                                       <?php echo(! empty($data['room_id_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded">
                                 <option value="">-- กรุณาเลือกห้อง --</option>
-                                <?php foreach($data['rooms'] as $room): ?>
-                                    <option value="<?php echo $room->id; ?>" <?php echo ($data['room_id'] == $room->id) ? 'selected' : ''; ?>>
+                                <?php foreach ($data['rooms'] as $room): ?>
+                                    <option value="<?php echo $room->id; ?>"<?php echo($data['room_id'] == $room->id) ? 'selected' : ''; ?>>
                                         <?php echo $room->name; ?> (<?php echo $room->capacity; ?> คน)
                                     </option>
                                 <?php endforeach; ?>
@@ -47,11 +47,11 @@
                         </div>
                         <div>
                             <label for="subject" class="block text-gray-700 font-semibold">หัวข้อการประชุม <sup class="text-red-500">*</sup></label>
-                            <input type="text" name="subject" class="w-full mt-1 px-3 py-2 border <?php echo (!empty($data['subject_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['subject']); ?>">
+                            <input type="text" name="subject" class="w-full mt-1 px-3 py-2 border                                                                                                  <?php echo(! empty($data['subject_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['subject']); ?>">
                             <span class="text-red-500 text-sm"><?php echo $data['subject_err']; ?></span>
                         </div>
                     </div>
-                    
+
                     <!-- Date & Time -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                         <div>
@@ -90,22 +90,22 @@
                     <div class="mb-4">
                         <label class="block text-gray-700 font-semibold">อุปกรณ์ที่ต้องการ</label>
                         <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                            <?php foreach($data['all_equipments'] as $equipment): ?>
+                            <?php foreach ($data['all_equipments'] as $equipment): ?>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="equipments[]" value="<?php echo $equipment->id; ?>" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500" <?php echo in_array($equipment->id, $data['equipments']) ? 'checked' : ''; ?>>
+                                    <input type="checkbox" name="equipments[]" value="<?php echo $equipment->id; ?>" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"<?php echo in_array($equipment->id, $data['equipments']) ? 'checked' : ''; ?>>
                                     <span class="ml-2 text-gray-700"><?php echo $equipment->name; ?></span>
                                 </label>
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    
+
                     <!-- Room Layout Image Upload -->
                     <div class="mb-4">
                         <label for="room_layout_image" class="block text-gray-700 font-semibold">รูปแบบการจัดห้อง (ถ้ามี)</label>
                         <input type="file" name="room_layout_image" id="room_layout_image" class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"/>
-                        <span class="text-red-500 text-sm"><?php echo (!empty($data['layout_err'])) ? $data['layout_err'] : ''; ?></span>
+                        <span class="text-red-500 text-sm"><?php echo(! empty($data['layout_err'])) ? $data['layout_err'] : ''; ?></span>
                     </div>
-                    
+
                     <!-- Note -->
                     <div class="mb-6">
                         <label for="note" class="block text-gray-700 font-semibold">หมายเหตุ</label>
@@ -115,7 +115,7 @@
                     <div class="mb-6">
                         <label for="note" class="block text-red-700 font-semibold">** หากเป็นการจองในช่วงวันหยุด กรุณาประสานเจ้าหน้าที่ ที่สามารถมาปฏิบัติงานได้ ด้วยตนเอง **</label>
                     </div>
-                    
+
                     <div class="mt-8">
                         <button type="submit" class="w-full sm:w-auto bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-600 transition">ส่งคำขอจอง</button>
                     </div>
@@ -130,48 +130,82 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ตรวจสอบ Role ของผู้ใช้ก่อน
-        const userRole = '<?php echo $_SESSION['user_role']; ?>';
-
-        // กฎทั้งหมดนี้จะทำงานเฉพาะเมื่อผู้ใช้เป็น 'user' เท่านั้น
+        // --- 1. การตั้งค่า `min` attribute (ยังคงมีประโยชน์สำหรับเบราว์เซอร์อื่น) ---
+        const userRole = '<?php echo $_SESSION['user_role'] ?? 'user'; ?>';
         if (userRole === 'user') {
-            const startDateInput = document.getElementsByName('start_date')[0];
-            const endDateInput = document.getElementsByName('end_date')[0];
-
-            // --- กฎข้อที่ 1: การจองล่วงหน้า ---
-            const advanceDays = <?php echo setting('booking_advance_days', 1); ?>;
+            const advanceDays =                                <?php echo setting('booking_advance_days', 1); ?>;
             const today = new Date();
-            today.setHours(0,0,0,0); // ตั้งเวลาเป็นเที่ยงคืนเพื่อความแม่นยำ
+            today.setHours(0, 0, 0, 0);
             today.setDate(today.getDate() + advanceDays);
-            const minDate = today.toISOString().split('T')[0];
-            
-            startDateInput.setAttribute('min', minDate);
-            endDateInput.setAttribute('min', minDate);
+            const minDateString = today.toISOString().split('T')[0];
 
-            // --- กฎข้อที่ 2: การจองวันหยุด ---
-            const allowWeekend = '<?php echo setting('allow_weekend_booking', '0'); ?>';
+            document.getElementsByName('start_date')[0].setAttribute('min', minDateString);
+            document.getElementsByName('end_date')[0].setAttribute('min', minDateString);
+        }
 
-            function checkDateRestrictions(event) {
-                // ทำงานต่อเมื่อ "ไม่อนุญาต" ให้จองวันหยุด
-                if (allowWeekend === '0') {
-                    const selectedDate = new Date(event.target.value);
-                    const day = selectedDate.getUTCDay(); 
+        // --- 2. การตรวจสอบตอนส่งฟอร์ม (Form Submission Validation) ---
+        const bookingForm = document.querySelector('form[action*="/booking/create"]');
 
-                    if (day === 0 || day === 6) { // 0=Sun, 6=Sat
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'ไม่สามารถเลือกวันหยุดได้',
-                            text: 'ระบบไม่อนุญาตให้ทำการจองในวันเสาร์-อาทิตย์',
-                        });
-                        event.target.value = ''; // ล้างค่า
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(event) {
+                // ทำงานเฉพาะ User เท่านั้น
+                if (userRole !== 'user') {
+                    return true; // อนุญาตให้ Admin ส่งฟอร์มได้เลย
+                }
+
+                const startDateInput = document.getElementsByName('start_date')[0];
+                const selectedDateString = startDateInput.value;
+
+                if (!selectedDateString) {
+                    return true; // ถ้าไม่มีวันที่ ก็ให้ Backend จัดการ validation
+                }
+
+                // --- เตรียมค่าสำหรับการตรวจสอบ ---
+                const advanceDays =                                    <?php echo setting('booking_advance_days', 1); ?>;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const minBookingDate = new Date(today);
+                minBookingDate.setDate(minBookingDate.getDate() + advanceDays);
+
+                const allowWeekend = '<?php echo setting('allow_weekend_booking', '0'); ?>';
+                const selectedDate = new Date(selectedDateString + 'T00:00:00Z');
+
+                // --- เริ่มการตรวจสอบ ---
+                let errorMessage = '';
+
+                // กฎข้อที่ 1: ตรวจสอบการจองล่วงหน้า
+                if (selectedDate < minBookingDate) {
+                    errorMessage = 'ต้องจองล่วงหน้าอย่างน้อย ' + advanceDays + ' วัน';
+                }
+
+                // กฎข้อที่ 2: ตรวจสอบวันหยุด (ถ้ายังไม่เจอ error แรก)
+                if (!errorMessage && allowWeekend === '0') {
+                    const day = selectedDate.getUTCDay();
+                    if (day === 0 || day === 6) {
+                        errorMessage = 'ระบบไม่อนุญาตให้ทำการจองในวันเสาร์-อาทิตย์';
                     }
                 }
-            }
 
-            startDateInput.addEventListener('change', checkDateRestrictions);
-            endDateInput.addEventListener('change', checkDateRestrictions);
+                // --- สรุปผล ---
+                if (errorMessage) {
+                    // **ถ้าเจอ Error ให้หยุดการส่งฟอร์ม**
+                    event.preventDefault();
+
+                    // แล้วค่อยแสดง SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เลือกวันที่ไม่ถูกต้อง',
+                        text: errorMessage,
+                    });
+
+                    return false;
+                }
+
+                // ถ้าไม่เจอ Error เลย ก็อนุญาตให้ส่งฟอร์มต่อไป
+                return true;
+            });
         }
-        // ถ้าเป็น 'admin', โค้ดใน if นี้ทั้งหมดจะถูกข้ามไป
     });
 </script>
 

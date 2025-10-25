@@ -5,3 +5,11 @@ body.swal2-shown:not(.swal2-height-auto) {
 .active-menu {
   background-color: rgba(0, 0, 0, 0.2); /* ทำให้สีเข้มขึ้นเล็กน้อย */
 }
+
+/*
+ * Grayscale Mode for Mourning Period
+ */
+.grayscale-mode {
+  -webkit-filter: grayscale(100%); /* For Safari, Chrome */
+  filter: grayscale(100%); /* Standard */
+}

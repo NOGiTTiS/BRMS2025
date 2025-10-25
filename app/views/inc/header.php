@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th" class="h-full bg-pink-50">
+<html lang="th" class="h-full <?php echo (setting('grayscale_mode_enabled', '0') == '1') ? 'grayscale-mode' : ''; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

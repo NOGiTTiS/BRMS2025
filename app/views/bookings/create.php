@@ -57,15 +57,17 @@
                         <div>
                             <label class="block text-gray-700 font-semibold">วัน-เวลา เริ่ม</label>
                             <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                <input type="date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_date']); ?>">
-                                <input type="time" name="start_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['start_time']); ?>">
+                                <input type="date" name="start_date" class="w-full px-3 py-2 border <?php echo (!empty($data['date_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['start_date']); ?>">
+                                <input type="time" name="start_time" class="w-full px-3 py-2 border <?php echo (!empty($data['date_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['start_time']); ?>">
                             </div>
+                            <!-- เพิ่มส่วนนี้เข้ามา -->
+                            <span class="text-red-500 text-sm font-semibold mt-1"><?php echo $data['date_err']; ?></span>
                         </div>
-                         <div>
+                        <div>
                             <label class="block text-gray-700 font-semibold">วัน-เวลา สิ้นสุด</label>
                             <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                <input type="date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_date']); ?>">
-                                <input type="time" name="end_time" class="w-full px-3 py-2 border border-gray-300 rounded" value="<?php echo htmlspecialchars($data['end_time']); ?>">
+                                <input type="date" name="end_date" class="w-full px-3 py-2 border <?php echo (!empty($data['date_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['end_date']); ?>">
+                                <input type="time" name="end_time" class="w-full px-3 py-2 border <?php echo (!empty($data['date_err'])) ? 'border-red-500' : 'border-gray-300'; ?> rounded" value="<?php echo htmlspecialchars($data['end_time']); ?>">
                             </div>
                         </div>
                     </div>
